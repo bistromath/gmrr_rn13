@@ -19,7 +19,25 @@
 
 include(GrPython)
 
+#find GRCC
+find_program(GRCC
+             NAMES grcc
+             PATHS /usr/local/bin /usr/bin
+            )
+
+set(GMRR_RN13 ${CMAKE_CURRENT_BINARY_DIR}/rn13.py)
+set(GMRR_RN13_GRC ${CMAKE_CURRENT_SOURCE_DIR}/rn13.grc)
+
+add_custom_target(gmrr_rn13 ALL DEPENDS ${GMRR_RN13})
+
+#use GRCC to make executable
+add_custom_command(OUTPUT ${GMRR_RN13}
+                   COMMAND ${GRCC} ${GMRR_RN13_GRC} -d ${CMAKE_CURRENT_BINARY_DIR}
+                   MAIN_DEPENDENCY ${GMRR_RN13_GRC}
+                  )
+
+
 GR_PYTHON_INSTALL(
-    PROGRAMS
+    PROGRAMS ${GMRR_RN13}
     DESTINATION bin
 )
