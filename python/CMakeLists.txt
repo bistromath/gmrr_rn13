@@ -31,7 +31,7 @@ endif()
 GR_PYTHON_INSTALL(
     FILES
     __init__.py
-    DESTINATION ${GR_PYTHON_DIR}/gmrr_rn13
+    gmrr_waveform_source.py DESTINATION ${GR_PYTHON_DIR}/gmrr_rn13
 )
 
 ########################################################################
@@ -41,3 +41,4 @@ include(GrTest)
 
 set(GR_TEST_TARGET_DEPS gnuradio-gmrr_rn13)
 set(GR_TEST_PYTHON_DIRS ${CMAKE_BINARY_DIR}/swig)
+GR_ADD_TEST(qa_gmrr_waveform_source ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/qa_gmrr_waveform_source.py)

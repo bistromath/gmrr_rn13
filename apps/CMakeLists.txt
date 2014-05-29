@@ -25,19 +25,26 @@ find_program(GRCC
              PATHS /usr/local/bin /usr/bin
             )
 
-set(GMRR_RN13 ${CMAKE_CURRENT_BINARY_DIR}/rn13.py)
-set(GMRR_RN13_GRC ${CMAKE_CURRENT_SOURCE_DIR}/rn13.grc)
+set(GMRR_RN13_PHASE1 ${CMAKE_CURRENT_BINARY_DIR}/CLABS_1A.py)
+set(GMRR_RN13_PHASE1_GRC ${CMAKE_CURRENT_SOURCE_DIR}/CLABS-1A.grc)
 
-add_custom_target(gmrr_rn13 ALL DEPENDS ${GMRR_RN13})
+set(GMRR_RN13_PHASE3 ${CMAKE_CURRENT_BINARY_DIR}/CLABS_3.py)
+set(GMRR_RN13_PHASE3_GRC ${CMAKE_CURRENT_SOURCE_DIR}/CLABS-3.grc)
 
 #use GRCC to make executable
-add_custom_command(OUTPUT ${GMRR_RN13}
-                   COMMAND ${GRCC} ${GMRR_RN13_GRC} -d ${CMAKE_CURRENT_BINARY_DIR}
-                   MAIN_DEPENDENCY ${GMRR_RN13_GRC}
+add_custom_command(OUTPUT ${GMRR_RN13_PHASE1}
+                   COMMAND ${GRCC} ${GMRR_RN13_PHASE1_GRC} -d ${CMAKE_CURRENT_BINARY_DIR}
+                   MAIN_DEPENDENCY ${GMRR_RN13_PHASE1_GRC}
+                  )
+add_custom_command(OUTPUT ${GMRR_RN13_PHASE3}
+                   COMMAND ${GRCC} ${GMRR_RN13_PHASE3_GRC} -d ${CMAKE_CURRENT_BINARY_DIR}
+                   MAIN_DEPENDENCY ${GMRR_RN13_PHASE3_GRC}
                   )
 
+add_custom_target(gmrr_rn13_phase1 ALL DEPENDS ${GMRR_RN13_PHASE1})
+add_custom_target(gmrr_rn13_phase3 ALL DEPENDS ${GMRR_RN13_PHASE3})
 
 GR_PYTHON_INSTALL(
-    PROGRAMS ${GMRR_RN13}
+    PROGRAMS ${GMRR_RN13_PHASE1} ${GMRR_RN13_PHASE3}
     DESTINATION bin
 )
