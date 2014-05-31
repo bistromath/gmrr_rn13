@@ -42,6 +42,7 @@ class gmrr_waveform_source(gr.sync_block):
             samp = int(samp.strip(',\t '))
             self._waveform.append(numpy.complex64(i+1j*q))
         self._offset = 0
+        print "Samples: %i" % len(self._waveform)
 
     def work(self, input_items, output_items):
         out = output_items[0]
