@@ -98,6 +98,12 @@ class clabs_tcp_ctrl(threading.Thread):
                             self._tb.set_select(not tw)
                             self._tb.set_selector_chooser(not tw)
 
+                        elif(v[0:2] == 'BW'): #set test waveform bandwidth
+                            bw = float(v[3:].strip())
+                            print "Setting test waveform bandwidth to %f" % bw
+                            self._tb.set_mod_bw_slider(bw)
+                            Qt.QMetaObject.invokeMethod(self._tb._mod_bw_slider_slider, "setValue", Qt.Q_ARG("double", bw))
+
                         elif(v[0:2] == 'BG'): #set baseband gain
                             bg = float(v[3:].strip())
                             print "Setting baseband gain to %f" % bg
