@@ -42,10 +42,10 @@ if _RTLD_GLOBAL != 0:
 
 
 # import swig generated symbols into the gmrr_rn13 namespace
-#from gmrr_rn13_swig import *
+from gmrr_rn13_swig import *
 
 # import any pure python here
-from gmrr_waveform_source import gmrr_waveform_source
+#from gmrr_waveform_source import gmrr_waveform_source
 #
 
 # ----------------------------------------------------------------

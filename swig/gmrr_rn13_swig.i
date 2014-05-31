@@ -8,9 +8,9 @@
 %include "gmrr_rn13_swig_doc.i"
 
 %{
-#include "skippy/stream_selector.h"
+#include "gmrr_rn13/gmrr_waveform_src.h"
 %}
 
 
-%include "skippy/stream_selector.h"
-GR_SWIG_BLOCK_MAGIC2(gmrr_rn13, stream_selector);
+%include "gmrr_rn13/gmrr_waveform_src.h"
+GR_SWIG_BLOCK_MAGIC2(gmrr_rn13, gmrr_waveform_src);

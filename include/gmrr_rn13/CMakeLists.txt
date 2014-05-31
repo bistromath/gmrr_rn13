@@ -22,5 +22,5 @@
 ########################################################################
 install(FILES
     api.h
-    DESTINATION include/gmrr_rn13
+    gmrr_waveform_src.h DESTINATION include/gmrr_rn13
 )

@@ -18,5 +18,5 @@
 # Boston, MA 02110-1301, USA.
 
 install(FILES
-    DESTINATION share/gnuradio/grc/blocks
+    gmrr_rn13_gmrr_waveform_src.xml DESTINATION share/gnuradio/grc/blocks
 )

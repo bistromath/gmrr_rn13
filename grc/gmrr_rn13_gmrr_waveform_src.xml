@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <block>
-  <name>gmrr_waveform_source</name>
-  <key>gmrr_rn13_gmrr_waveform_source</key>
+  <name>gmrr_waveform_src</name>
+  <key>gmrr_rn13_gmrr_waveform_src</key>
   <category>gmrr_rn13</category>
   <import>import gmrr_rn13</import>
-  <make>gmrr_rn13.gmrr_waveform_source($filename)</make>
+  <make>gmrr_rn13.gmrr_waveform_src($filename)</make>
   <!-- Make one 'param' node for every Parameter you want settable from the GUI.
        Sub-nodes:
        * name
@@ -13,7 +13,7 @@
   <param>
     <name>filename</name>
     <key>filename</key>
-    <type>string</type>
+    <type>file_open</type>
   </param>
 
   <source>
