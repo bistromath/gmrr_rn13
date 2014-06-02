@@ -199,7 +199,7 @@ if __name__ == '__main__':
     (options, args) = parser.parse_args()
     Qt.QApplication.setGraphicsSystem(gr.prefs().get_string('qtgui','style','raster'))
     qapp = Qt.QApplication(sys.argv)
-    tb = CLABS_3_init(txgain=options.txgain, rxfreq=options.rxfreq, samp_rate=options.samp_rate, rxgain=options.rxgain, txfreq=options.txfreq, baseband_gain=options.baseband_gain)
+    tb = CLABS_3_init(initial_txgain=options.txgain, rxfreq=options.rxfreq, samp_rate=options.samp_rate, initial_rxgain=options.rxgain, txfreq=options.txfreq, initial_baseband_gain=options.baseband_gain)
     tcp_server = clabs_tcp_ctrl(tb, options.port)
     tcp_server.start()
     tb.start()
