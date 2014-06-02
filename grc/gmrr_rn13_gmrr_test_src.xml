@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<block>
+  <name>gmrr_test_src</name>
+  <key>gmrr_rn13_gmrr_test_src</key>
+  <category>gmrr_rn13</category>
+  <import>import gmrr_rn13</import>
+  <make>gmrr_rn13.gmrr_test_src($samp_rate, $mode, $mod_type, $carrier_freq, $mod_freq, $mod_index)</make>
+  <callback>set_mode($mode)</callback>
+  <callback>set_mod($mod_type)</callback>
+  <callback>set_freq($carrier_freq)</callback>
+  <callback>set_mod_freq($mod_freq)</callback>
+  <callback>set_samp_rate($samp_rate)</callback>
+  <callback>set_mod_index($mod_index)</callback>
+  <!-- Make one 'param' node for every Parameter you want settable from the GUI.
+       Sub-nodes:
+       * name
+       * key (makes the value accessible as $keyname, e.g. in the make node)
+       * type -->
+  <param>
+    <name>Sample rate</name>
+    <key>samp_rate</key>
+    <type>float</type>
+  </param>
+  <param>
+    <name>Modulation type</name>
+    <key>mod_type</key>
+    <type>int</type>
+  </param>
+  <param>
+    <name>Mode</name>
+    <key>mode</key>
+    <type>int</type>
+  </param>
+  <param>
+    <name>Carrier freq</name>
+    <key>carrier_freq</key>
+    <type>float</type>
+  </param>
+  <param>
+    <name>Modulation freq</name>
+    <key>mod_freq</key>
+    <type>float</type>
+  </param>
+  <param>
+    <name>Modulation index</name>
+    <key>mod_index</key>
+    <type>float</type>
+  </param>
+
+  <source>
+    <name>out</name>
+    <type>complex</type>
+  </source>
+</block>

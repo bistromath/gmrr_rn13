@@ -46,6 +46,7 @@ from gmrr_rn13_swig import *
 
 # import any pure python here
 #from gmrr_waveform_source import gmrr_waveform_source
+from gmrr_test_src import gmrr_test_src
 #
 
 # ----------------------------------------------------------------
