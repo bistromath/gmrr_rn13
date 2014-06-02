@@ -79,50 +79,85 @@ class clabs_tcp_ctrl(threading.Thread):
                         print "Message: %s" % v
 
                         #do something.
-                        if(v[0:2] == 'IF'): #set RF input freq
+                        if v[0:2] == 'IF': #set RF input freq
                             f = float(v[3:].strip())*1e6
                             print "Setting input frequency to %f" % f
                             self._tb.set_rxfreq(f)
 
-                        elif(v[0:2] == 'OF'): #set predriver output freq
+                        elif v[0:2] == 'OF': #set predriver output freq
                             f = float(v[3:].strip())*1e6
                             print "Setting predriver frequency to %f" % f
                             self._tb.set_txfreq(f)
 
-                        elif(v[0:2] == 'TW'): #select internal test waveform (bool)
-                            tw = int(v[3:].strip())
-                            if(tw):
-                                print "Selecting internal test waveform"
-                            else:
+                        elif v[0:2] == 'TW': #select internal test waveform:
+                            tw = int(v[3:].strip()) #0 for off, 1 for 10-tone, 2 for config. generator
+                            if tw==0:
                                 print "Selecting RF input"
-                            self._tb.set_select(not tw)
-                            self._tb.set_selector_chooser(not tw)
+                            elif tw==1:
+                                print "Selecting IQ file source"
+                            elif tw==2:
+                                print "Selecting configurable waveform source"
+                            self._tb.set_select(tw)
+                            self._tb.set_selector_chooser(tw)
 
-                        elif(v[0:2] == 'BW'): #set test waveform bandwidth
+                        elif v[0:2] == 'BW': #set IQ waveform bandwidth
                             bw = float(v[3:].strip())
                             print "Setting test waveform bandwidth to %f" % bw
                             self._tb.set_mod_bw_slider(bw)
                             Qt.QMetaObject.invokeMethod(self._tb._mod_bw_slider_slider, "setValue", Qt.Q_ARG("double", bw))
 
-                        elif(v[0:2] == 'BG'): #set baseband gain
+                        elif v[0:2] == 'TF': #set waveform generator frequency
+                            tf = float(v[3:].strip())
+                            print "Setting test waveform freq to %f" % tf
+                            self._tb.set_tone_freq(tf)
+#                            Qt.QMetaObject.invokeMethod(self._tb._mod_freq_slider, "setValue", Qt.Q_ARG("double", bw))
+
+                        elif v[0:2] == 'TA': #set waveform generator amplitude
+                            ta = float(v[3:].strip())
+                            print "Setting test waveform ampl to %f" % ta
+                            self._tb.test_src.set_ampl(ta)
+
+                        elif v[0:2] == 'MI':
+                            mi = float(v[3:].strip())
+                            print "Setting test waveform mod index to %f" % mi
+                            self._tb.set_mod_index(mi)
+                            Qt.QMetaObject.invokeMethod(self._tb._mod_index_slider, "setValue", Qt.Q_ARG("double", mi))
+
+                        elif v[0:2] == 'MF':
+                            mf = float(v[3:].strip())
+                            print "Setting test waveform mod freq to %f" % mf
+                            self._tb.set_mod_freq(mf)
+                            Qt.QMetaObject.invokeMethod(self._tb._mod_freq_slider, "setValue", Qt.Q_ARG("double", mf))
+
+                        elif v[0:2] == 'MT':
+                            mt = min(2, int(v[3:].strip()))
+                            print "Setting modulation type to %s" % (("CW", "Phase mod", "Amplitude mod")[mt])
+                            self._tb.set_mod_type_chooser(mt)
+
+                        elif v[0:2] == 'MW':
+                            mw = min(2, int(v[3:].strip()))
+                            print "Setting modulation waveform to %s" % (("Constant", "Cosine", "Triangle", "Square")[mw])
+                            self._tb.set_mod_wave_chooser(mw)
+
+                        elif v[0:2] == 'BG': #set baseband gain
                             bg = float(v[3:].strip())
                             print "Setting baseband gain to %f" % bg
                             self._tb.set_baseband_gain(bg)
                             Qt.QMetaObject.invokeMethod(self._tb._baseband_gain_slider_slider, "setValue", Qt.Q_ARG("double", bg))
 
-                        elif(v[0:2] == 'FG'): #set final gain
+                        elif v[0:2] == 'FG': #set final gain
                             fg = float(v[3:].strip())
                             print "Setting final gain to %f" % fg
                             self._tb.set_envelope_gain(fg)
                             Qt.QMetaObject.invokeMethod(self._tb._envelope_gain_slider, "setValue", Qt.Q_ARG("double", fg))
 
-                        elif(v[0:2] == 'RG'): #set RF gain
+                        elif v[0:2] == 'RG': #set RF gain
                             rg = float(v[3:].strip())
                             print "Setting RF input gain to %f" % rg
                             self._tb.set_rxgain(rg)
                             Qt.QMetaObject.invokeMethod(self._tb._rxgain_slider_slider, "setValue", Qt.Q_ARG("double", rg))
 
-                        elif(v[0:2] == 'PG'): #set predriver gain
+                        elif v[0:2] == 'PG': #set predriver gain
                             pg = float(v[3:].strip())
                             print "Setting predriver output gain to %f" % pg
                             self._tb.set_txgain(rg)
@@ -157,15 +192,14 @@ if __name__ == '__main__':
         help="Set rxgain [default=%default]")
     parser.add_option("", "--txfreq", dest="txfreq", type="eng_float", default=eng_notation.num_to_str(75.e6),
         help="Set txfreq [default=%default]")
-    parser.add_option("", "--initial-select", dest="initial_select", type="intx", default=1,
-        help="Set Initial selection [default=%default]")
     parser.add_option("", "--baseband-gain", dest="baseband_gain", type="eng_float", default=eng_notation.num_to_str(1),
         help="Set baseband_gain [default=%default]")
     parser.add_option("", "--port", type="intx", default=52001, help="Set TCP port to listen on [default=%default]")
+    parser.add_option("", "--filename", type="string", default="/home/nick/Desktop/DL10.txt", help="Set test waveform file source")
     (options, args) = parser.parse_args()
     Qt.QApplication.setGraphicsSystem(gr.prefs().get_string('qtgui','style','raster'))
     qapp = Qt.QApplication(sys.argv)
-    tb = CLABS_3_init(txgain=options.txgain, rxfreq=options.rxfreq, samp_rate=options.samp_rate, rxgain=options.rxgain, txfreq=options.txfreq, initial_select=options.initial_select, baseband_gain=options.baseband_gain)
+    tb = CLABS_3_init(txgain=options.txgain, rxfreq=options.rxfreq, samp_rate=options.samp_rate, rxgain=options.rxgain, txfreq=options.txfreq, baseband_gain=options.baseband_gain)
     tcp_server = clabs_tcp_ctrl(tb, options.port)
     tcp_server.start()
     tb.start()
