@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='ASCII'?>
 <flow_graph>
-  <timestamp>Mon Jun  2 14:43:41 2014</timestamp>
+  <timestamp>Thu Jun 12 10:26:26 2014</timestamp>
   <block>
     <key>options</key>
     <param>
@@ -323,45 +323,6 @@
     <param>
       <key>_coordinate</key>
       <value>(10, 530)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-  </block>
-  <block>
-    <key>parameter</key>
-    <param>
-      <key>id</key>
-      <value>filename</value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>label</key>
-      <value>filename</value>
-    </param>
-    <param>
-      <key>value</key>
-      <value>/home/nick/Desktop/DL10.TXT</value>
-    </param>
-    <param>
-      <key>type</key>
-      <value>string</value>
-    </param>
-    <param>
-      <key>short_id</key>
-      <value></value>
-    </param>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(95, 191)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -3822,6 +3783,45 @@
     <param>
       <key>_coordinate</key>
       <value>(628, 14)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+  </block>
+  <block>
+    <key>parameter</key>
+    <param>
+      <key>id</key>
+      <value>filename</value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>label</key>
+      <value>filename</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>/opt/DL10.TXT</value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>string</value>
+    </param>
+    <param>
+      <key>short_id</key>
+      <value></value>
+    </param>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(95, 191)</value>
     </param>
     <param>
       <key>_rotation</key>
