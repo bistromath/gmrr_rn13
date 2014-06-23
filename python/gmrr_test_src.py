@@ -15,7 +15,7 @@ from grc_gnuradio.blks2 import selector
 import gmrr_rn13
 
 class gmrr_test_src(gr.hier_block2):
-    def __init__(self, samp_rate, mode, mod_type, carrier_freq, mod_freq, mod_index):
+    def __init__(self, samp_rate, mode, mod_type, carrier_freq, mod_freq, mod_level, carrier_level):
         gr.hier_block2.__init__(self,
             "gmrr_test_src",
             gr.io_signature(0, 0, 0),  # Input signature
@@ -40,7 +40,8 @@ class gmrr_test_src(gr.hier_block2):
         self.set_mod(mod_type)
         self.set_freq(carrier_freq)
         self.set_mod_freq(mod_freq)
-        self.set_mod_index(mod_index)
+        self.set_mod_level(mod_level)
+        self.set_carrier_level(carrier_level)
 
     def set_freq(self, freq):
         self._sig_src_1.set_frequency(freq)
@@ -61,12 +62,15 @@ class gmrr_test_src(gr.hier_block2):
         self._sig_src_2.set_waveform(analog.GR_CONST_WAVE)
         self.set_mod_ampl(1)
         self._mod_selector.set_input_index(0)
+        self._mode = 'CW'
     def set_pm_mode(self):
         self._sig_src_1.set_waveform(analog.GR_COS_WAVE)
         self._mod_selector.set_input_index(1)
+        self._mode = 'PM'
     def set_am_mode(self):
         self._sig_src_1.set_waveform(analog.GR_COS_WAVE)
         self._mod_selector.set_input_index(2)
+        self._mode = 'AM'
 
     #0 for CW, 1 for PM, 2 for AM
     def set_mode(self, mode):
@@ -88,10 +92,16 @@ class gmrr_test_src(gr.hier_block2):
         elif mod==3:
             self.set_square_mod()
 
-    def set_mod_index(self, index):
-        self._pm.set_sensitivity(index)
-        self._sig_src_2.set_offset(1-index)
-        self._sig_src_2.set_amplitude(index)
+    def set_carrier_level(self, level):
+        self.set_mod_offset(level)
+        if self._mode=='PM':
+            self._sig_src_1.set_amplitude(level)
+        else:
+            self._sig_src_1.set_amplitude(1)
+
+    def set_mod_level(self, level):
+        self.set_mod_ampl(level)
+        self._pm.set_sensitivity(level)
 
     def set_const_mod(self):
         self._sig_src_2.set_waveform(analog.GR_CONST_WAVE)

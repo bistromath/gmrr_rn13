@@ -61,6 +61,7 @@ class clabs_tcp_ctrl(threading.Thread):
                     print "New connection"
                     conn.setblocking(0)
                     ins.append(conn)
+                    outs.append(conn)
                     msgqs[conn] = ""
                 else:
                     d = s.recv(1024)
@@ -76,100 +77,189 @@ class clabs_tcp_ctrl(threading.Thread):
             for k, v in msgqs.iteritems():
                 if len(v) > 0:
                     if v[-1] == "\n":
+                        retstr = "%s " % v[0:2]
                         print "Message: %s" % v
 
                         #do something.
                         if v[0:2] == 'IF': #set RF input freq
-                            f = float(v[3:].strip())*1e6
-                            print "Setting input frequency to %f" % f
-                            self._tb.set_rxfreq(f)
+                            try:
+                                f = float(v[3:].strip())*1e6
+                                print "Setting input frequency to %f" % f
+                                self._tb.set_rxfreq(f)
+                                retstr += '0'
+                            except:
+                                retstr += '2'
 
                         elif v[0:2] == 'OF': #set predriver output freq
-                            f = float(v[3:].strip())*1e6
-                            print "Setting predriver frequency to %f" % f
-                            self._tb.set_txfreq(f)
+                            try:
+                                f = float(v[3:].strip())*1e6
+                                print "Setting predriver frequency to %f" % f
+                                self._tb.set_txfreq(f)
+                                retstr += '0'
+                            except:
+                                retstr += '2'
 
                         elif v[0:2] == 'TW': #select internal test waveform:
-                            tw = int(v[3:].strip()) #0 for off, 1 for 10-tone, 2 for config. generator
+                            tw = int(v[3:].strip())
                             if tw==0:
                                 print "Selecting RF input"
+                                retstr += '0'
                             elif tw==1:
-                                print "Selecting IQ file source"
-                            elif tw==2:
                                 print "Selecting configurable waveform source"
+                                retstr += '0'
+                            else:
+                                retstr += '2'
                             self._tb.set_select(tw)
                             self._tb.set_selector_chooser(tw)
 
                         elif v[0:2] == 'BW': #set IQ waveform bandwidth
-                            bw = float(v[3:].strip())
-                            print "Setting test waveform bandwidth to %f" % bw
-                            self._tb.set_mod_bw_slider(bw)
-                            Qt.QMetaObject.invokeMethod(self._tb._mod_bw_slider_slider, "setValue", Qt.Q_ARG("double", bw))
+                            try:
+                                bw = float(v[3:].strip())
+                                retstr += '0'
+                            except:
+                                retstr += '2'
+                                print "Setting test waveform bandwidth to %f" % bw
+                                self._tb.set_mod_bw_slider(bw)
+                                Qt.QMetaObject.invokeMethod(self._tb._mod_bw_slider_slider, "setValue", Qt.Q_ARG("double", bw))
 
                         elif v[0:2] == 'TF': #set waveform generator frequency
-                            tf = float(v[3:].strip())
+                            try:
+                                tf = float(v[3:].strip())
+                                retstr += '0'
+                            except:
+                                retstr += '2'
                             print "Setting test waveform freq to %f" % tf
                             self._tb.set_tone_freq(tf)
 #                            Qt.QMetaObject.invokeMethod(self._tb._mod_freq_slider, "setValue", Qt.Q_ARG("double", bw))
 
                         elif v[0:2] == 'TA': #set waveform generator amplitude
-                            ta = float(v[3:].strip())
+                            try:
+                                ta = float(v[3:].strip())
+                                retstr += '0'
+                            except:
+                                retstr += '2'
                             print "Setting test waveform ampl to %f" % ta
                             self._tb.test_src.set_ampl(ta)
 
-                        elif v[0:2] == 'MI':
-                            mi = float(v[3:].strip())
-                            print "Setting test waveform mod index to %f" % mi
-                            self._tb.set_mod_index(mi)
-                            Qt.QMetaObject.invokeMethod(self._tb._mod_index_slider, "setValue", Qt.Q_ARG("double", mi))
+                        elif v[0:2] == 'ML':
+                            try:
+                                ml = float(v[3:].strip())
+                                retstr += '0'
+                            except:
+                                retstr += '2'
+                            print "Setting test waveform modulation level to %f" % ml
+                            self._tb.set_mod_level(ml)
+                            Qt.QMetaObject.invokeMethod(self._tb._mod_level_slider, "setValue", Qt.Q_ARG("double", ml))
+                        elif v[0:2] == 'CL':
+                            try:
+                                cl = float(v[3:].strip())
+                                retstr += '0'
+                            except:
+                                retstr += '2'
+                            print "Setting test waveform carrier level to %f" % cl
+                            self._tb.set_carrier_level(cl)
+                            Qt.QMetaObject.invokeMethod(self._tb._carrier_level_slider, "setValue", Qt.Q_ARG("double", cl))
 
                         elif v[0:2] == 'MF':
-                            mf = float(v[3:].strip())
+                            try:
+                                mf = float(v[3:].strip())
+                                retstr += '0'
+                            except:
+                                retstr += '2'
                             print "Setting test waveform mod freq to %f" % mf
                             self._tb.set_mod_freq(mf)
                             Qt.QMetaObject.invokeMethod(self._tb._mod_freq_slider, "setValue", Qt.Q_ARG("double", mf))
 
                         elif v[0:2] == 'MT':
-                            mt = min(2, int(v[3:].strip()))
-                            print "Setting modulation type to %s" % (("CW", "Phase mod", "Amplitude mod")[mt])
+                            try:
+                                mt = int(v[3:].strip())
+                                if mt > 3:
+                                    mt = 3
+                                    retstr += '2'
+                                else:
+                                    retstr += '0'
+                            except:
+                                retstr += '2'
+                            print "Setting modulation type to %s" % (("CW", "Phase mod", "Amplitude mod", "Downloadable tone")[mt])
                             self._tb.set_mod_type_chooser(mt)
 
                         elif v[0:2] == 'MW':
-                            mw = min(2, int(v[3:].strip()))
+                            try:
+                                mw = int(v[3:].strip())
+                                if mw > 3:
+                                    mw = 3
+                                    retstr += '2'
+                                else:
+                                    retstr += '0'
+                            except:
+                                retstr += '2'
                             print "Setting modulation waveform to %s" % (("Constant", "Cosine", "Triangle", "Square")[mw])
                             self._tb.set_mod_wave_chooser(mw)
 
                         elif v[0:2] == 'BG': #set baseband gain
-                            bg = float(v[3:].strip())
+                            try:
+                                bg = float(v[3:].strip())
+                                retstr += '0'
+                            except:
+                                retstr += '2'
                             print "Setting baseband gain to %f" % bg
                             self._tb.set_baseband_gain(bg)
                             Qt.QMetaObject.invokeMethod(self._tb._baseband_gain_slider_slider, "setValue", Qt.Q_ARG("double", bg))
 
                         elif v[0:2] == 'FG': #set final gain
-                            fg = float(v[3:].strip())
+                            try:
+                                fg = float(v[3:].strip())
+                                retstr += '0'
+                            except:
+                                retstr += '2'
                             print "Setting final gain to %f" % fg
                             self._tb.set_envelope_gain(fg)
                             Qt.QMetaObject.invokeMethod(self._tb._envelope_gain_slider, "setValue", Qt.Q_ARG("double", fg))
 
                         elif v[0:2] == 'RG': #set RF gain
-                            rg = float(v[3:].strip())
+                            try:
+                                rg = float(v[3:].strip())
+                                retstr += '0'
+                            except:
+                                retstr += '2'
                             print "Setting RF input gain to %f" % rg
                             self._tb.set_rxgain(rg)
                             Qt.QMetaObject.invokeMethod(self._tb._rxgain_slider_slider, "setValue", Qt.Q_ARG("double", rg))
 
                         elif v[0:2] == 'PG': #set predriver gain
-                            pg = float(v[3:].strip())
+                            try:
+                                pg = float(v[3:].strip())
+                                retstr += '0'
+                            except:
+                                retstr += '2'
                             print "Setting predriver output gain to %f" % pg
                             self._tb.set_txgain(rg)
                             Qt.QMetaObject.invokeMethod(self._tb._txgain_slider_slider, "setValue", Qt.Q_ARG("double", pg))
 
+                        else:
+                            retstr += '1'
+
+                        #now post replies to each listener
+                        retstr += '\n'
+                        for s in outs:
+                            try:
+                                s.send(retstr)
+                            except:
+                                pass
+
                         msgqs[k] = ""
 
         for s in ins:
-            s.shutdown(socket.SHUT_RDWR)
-            s.close()
-        self._sock.shutdown(socket.SHUT_RDWR)
-        self._sock.close()
+            try:
+                s.shutdown(socket.SHUT_RDWR)
+                s.close()
+            except:
+                pass
+        try:
+            self._sock.shutdown(socket.SHUT_RDWR)
+            self._sock.close()
+        except:
+            pass
 
 
 if __name__ == '__main__':

@@ -4,13 +4,14 @@
   <key>gmrr_rn13_gmrr_test_src</key>
   <category>gmrr_rn13</category>
   <import>import gmrr_rn13</import>
-  <make>gmrr_rn13.gmrr_test_src($samp_rate, $mode, $mod_type, $carrier_freq, $mod_freq, $mod_index)</make>
+  <make>gmrr_rn13.gmrr_test_src($samp_rate, $mode, $mod_type, $carrier_freq, $mod_freq, $mod_level, $carrier_level)</make>
   <callback>set_mode($mode)</callback>
   <callback>set_mod($mod_type)</callback>
   <callback>set_freq($carrier_freq)</callback>
   <callback>set_mod_freq($mod_freq)</callback>
   <callback>set_samp_rate($samp_rate)</callback>
-  <callback>set_mod_index($mod_index)</callback>
+  <callback>set_mod_level($mod_level)</callback>
+  <callback>set_carrier_level($carrier_level)</callback>
   <!-- Make one 'param' node for every Parameter you want settable from the GUI.
        Sub-nodes:
        * name
@@ -42,8 +43,14 @@
     <type>float</type>
   </param>
   <param>
-    <name>Modulation index</name>
-    <key>mod_index</key>
+    <name>Modulation level</name>
+    <key>mod_level</key>
+    <type>float</type>
+  </param>
+
+  <param>
+    <name>Carrier level</name>
+    <key>carrier_level</key>
     <type>float</type>
   </param>
 
