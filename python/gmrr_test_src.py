@@ -36,85 +36,98 @@ class gmrr_test_src(gr.hier_block2):
         self.connect(self._mod_selector, (self._mult,1))
 
         self.connect(self._mult, self)
-        self.set_mode(mode)
-        self.set_mod(mod_type)
-        self.set_freq(carrier_freq)
-        self.set_mod_freq(mod_freq)
-        self.set_mod_level(mod_level)
-        self.set_carrier_level(carrier_level)
+
+        self._samp_rate = samp_rate
+        self._mode = ['CW', 'PM', 'AM'][mode]
+        self._mod_type = [analog.GR_CONST_WAVE, analog.GR_COS_WAVE, analog.GR_TRI_WAVE, analog.GR_SQR_WAVE][mod_type]
+        self._freq = carrier_freq
+        self._mod_freq = mod_freq
+        self._carrier_ampl = carrier_level
+        self._mod_ampl = mod_level
+
+        self.update()
+
+    def update(self):
+        #figure out all required settings here
+        #we do this in a single monolithic function because
+        #several settings depend on other settings, and that
+        #means we have to keep state.
+        if self._mode == 'CW':
+            self._sig_src_1.set_waveform(analog.GR_COS_WAVE)
+            self._sig_src_1.set_frequency(self._freq)
+            self._sig_src_1.set_amplitude(1)
+            self._sig_src_1.set_offset(0)
+            self._sig_src_2.set_frequency(self._mod_freq)
+            self._sig_src_2.set_waveform(analog.GR_COS_WAVE)
+            self._sig_src_2.set_amplitude(self._mod_ampl)
+            self._sig_src_2.set_offset(self._carrier_ampl)
+            self._mod_selector.set_input_index(0)
+
+        elif self._mode == 'PM':
+            self._sig_src_1.set_waveform(analog.GR_COS_WAVE)
+            self._sig_src_1.set_frequency(self._freq)
+            self._sig_src_1.set_amplitude(1)
+            self._sig_src_1.set_offset(self._carrier_ampl)
+            self._sig_src_2.set_waveform(self._mod_type)
+            self._sig_src_2.set_frequency(self._mod_freq)
+            if self._mod_type in [analog.GR_TRI_WAVE, analog.GR_SQR_WAVE]:
+                self._sig_src_2.set_amplitude(self._mod_ampl*2)
+                self._sig_src_2.set_offset(-self._mod_ampl+self._carrier_ampl)
+            else:
+                self._sig_src_2.set_amplitude(self._mod_ampl)
+                self._sig_src_2.set_offset(self._carrier_ampl)
+            self._mod_selector.set_input_index(1)
+            self._pm.set_sensitivity(self._mod_ampl)
+
+        elif self._mode == 'AM':
+            self._sig_src_1.set_waveform(analog.GR_COS_WAVE)
+            self._sig_src_1.set_frequency(self._freq)
+            self._sig_src_1.set_amplitude(1)
+            self._sig_src_1.set_offset(0)
+            self._sig_src_2.set_waveform(self._mod_type)
+            self._sig_src_2.set_frequency(self._mod_freq)
+            if self._mod_type in [analog.GR_TRI_WAVE, analog.GR_SQR_WAVE]:
+                self._sig_src_2.set_amplitude(self._mod_ampl*2)
+                self._sig_src_2.set_offset(-self._mod_ampl+self._carrier_ampl)
+            else:
+                self._sig_src_2.set_amplitude(self._mod_ampl)
+                self._sig_src_2.set_offset(self._carrier_ampl)
+            self._mod_selector.set_input_index(2)
+
+        else:
+            print "Invalid mode %s" % self._mode
+
 
     def set_freq(self, freq):
-        self._sig_src_1.set_frequency(freq)
-    def set_ampl(self, ampl):
-        self._sig_src_1.set_amplitude(ampl)
-    def set_offset(self, offset):
-        self._sig_src_1.set_offset(offset)
+        self._freq = freq
+        self.update()
 
     def set_mod_freq(self, freq):
-        self._sig_src_2.set_frequency(freq)
-    def set_mod_ampl(self, ampl):
-        self._sig_src_2.set_amplitude(ampl)
-    def set_mod_offset(self, offset):
-        self._sig_src_2.set_offset(offset)
+        self._mod_freq = freq
+        self.update()
 
-    def set_cw_mode(self):
-        self._sig_src_1.set_waveform(analog.GR_COS_WAVE)
-        self._sig_src_2.set_waveform(analog.GR_CONST_WAVE)
-        self.set_mod_ampl(1)
-        self._mod_selector.set_input_index(0)
-        self._mode = 'CW'
-    def set_pm_mode(self):
-        self._sig_src_1.set_waveform(analog.GR_COS_WAVE)
-        self._mod_selector.set_input_index(1)
-        self._mode = 'PM'
-    def set_am_mode(self):
-        self._sig_src_1.set_waveform(analog.GR_COS_WAVE)
-        self._mod_selector.set_input_index(2)
-        self._mode = 'AM'
+    def set_mod_level(self, mod_level):
+        self._mod_ampl = mod_level
+        self.update()
+
+    def set_carrier_level(self, carrier_level):
+        self._carrier_ampl = carrier_level
+        self.update()
 
     #0 for CW, 1 for PM, 2 for AM
     def set_mode(self, mode):
-        if mode==0:
-            self.set_cw_mode()
-        elif mode==1:
-            self.set_pm_mode()
-        elif mode==2:
-            self.set_am_mode()
+        self._mode = ['CW', 'PM', 'AM'][mode]
+        self.update()
 
     #0 for constant, 1 for sine, 2 for triangle, 3 for square
     def set_mod(self, mod):
-        if mod==0:
-            self.set_const_mod()
-        elif mod==1:
-            self.set_cosine_mod()
-        elif mod==2:
-            self.set_triangle_mod()
-        elif mod==3:
-            self.set_square_mod()
-
-    def set_carrier_level(self, level):
-        self.set_mod_offset(level)
-        if self._mode=='PM':
-            self._sig_src_1.set_amplitude(level)
-        else:
-            self._sig_src_1.set_amplitude(1)
-
-    def set_mod_level(self, level):
-        self.set_mod_ampl(level)
-        self._pm.set_sensitivity(level)
-
-    def set_const_mod(self):
-        self._sig_src_2.set_waveform(analog.GR_CONST_WAVE)
-    def set_cosine_mod(self):
-        self._sig_src_2.set_waveform(analog.GR_COS_WAVE)
-    def set_triangle_mod(self):
-        self._sig_src_2.set_waveform(analog.GR_TRI_WAVE)
-    def set_square_mod(self):
-        self._sig_src_2.set_waveform(analog.GR_SQR_WAVE)
+        self._mod_type = [analog.GR_CONST_WAVE, analog.GR_COS_WAVE, analog.GR_TRI_WAVE, analog.GR_SQR_WAVE][mod]
+        self.update()
 
     def set_samp_rate(self, rate):
         self._sig_src_1.set_sampling_freq(rate)
         self._sig_src_2.set_sampling_freq(rate)
+        self.update()
 
 
 
