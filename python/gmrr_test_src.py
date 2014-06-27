@@ -20,7 +20,7 @@ class gmrr_test_src(gr.hier_block2):
             "gmrr_test_src",
             gr.io_signature(0, 0, 0),  # Input signature
             gr.io_signature(1, 1, gr.sizeof_gr_complex))
-        self._sig_src_1 = analog.sig_source_c(samp_rate, analog.GR_COS_WAVE, 0, 1, 0)
+        self._sig_src_1 = analog.sig_source_c(samp_rate, analog.GR_SIN_WAVE, 0, 1, 0)
         self._sig_src_2 = analog.sig_source_c(samp_rate, analog.GR_CONST_WAVE, 0, 1, 0)
         self._c2r = blocks.complex_to_real()
         self._f2c = blocks.float_to_complex()
@@ -66,16 +66,16 @@ class gmrr_test_src(gr.hier_block2):
         elif self._mode == 'PM':
             self._sig_src_1.set_waveform(analog.GR_COS_WAVE)
             self._sig_src_1.set_frequency(self._freq)
-            self._sig_src_1.set_amplitude(1)
-            self._sig_src_1.set_offset(self._carrier_ampl)
+            self._sig_src_1.set_amplitude(self._carrier_ampl)
+            self._sig_src_1.set_offset(0)#self._carrier_ampl)
             self._sig_src_2.set_waveform(self._mod_type)
             self._sig_src_2.set_frequency(self._mod_freq)
-            if self._mod_type in [analog.GR_TRI_WAVE, analog.GR_SQR_WAVE]:
-                self._sig_src_2.set_amplitude(self._mod_ampl*2)
-                self._sig_src_2.set_offset(-self._mod_ampl+self._carrier_ampl)
-            else:
-                self._sig_src_2.set_amplitude(self._mod_ampl)
-                self._sig_src_2.set_offset(self._carrier_ampl)
+#            if self._mod_type in [analog.GR_TRI_WAVE, analog.GR_SQR_WAVE]:
+#                self._sig_src_2.set_amplitude(self._mod_ampl*2)
+#                self._sig_src_2.set_offset(-self._mod_ampl+self._carrier_ampl)
+#            else:
+#                self._sig_src_2.set_amplitude(self._mod_ampl)
+            self._sig_src_1.set_offset(0)
             self._mod_selector.set_input_index(1)
             self._pm.set_sensitivity(self._mod_ampl)
 
