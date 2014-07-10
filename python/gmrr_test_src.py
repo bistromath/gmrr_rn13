@@ -59,8 +59,8 @@ class gmrr_test_src(gr.hier_block2):
             self._sig_src_1.set_offset(0)
             self._sig_src_2.set_frequency(self._mod_freq)
             self._sig_src_2.set_waveform(analog.GR_COS_WAVE)
-            self._sig_src_2.set_amplitude(self._mod_ampl)
-            self._sig_src_2.set_offset(self._carrier_ampl)
+            self._sig_src_2.set_amplitude(self._carrier_ampl)
+            self._sig_src_2.set_offset(0)
             self._mod_selector.set_input_index(0)
 
         elif self._mode == 'PM':
