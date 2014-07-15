@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='ASCII'?>
 <flow_graph>
-  <timestamp>Thu Jul 10 10:19:02 2014</timestamp>
+  <timestamp>Tue Jul 15 14:10:44 2014</timestamp>
   <block>
     <key>options</key>
     <param>
@@ -13,7 +13,7 @@
     </param>
     <param>
       <key>title</key>
-      <value>USRP DSP Operation, Program #CLABS-3D</value>
+      <value>USRP DSP Operation, Program #CLABS-3E</value>
     </param>
     <param>
       <key>author</key>
@@ -1322,53 +1322,6 @@
     </param>
   </block>
   <block>
-    <key>fractional_resampler_xx</key>
-    <param>
-      <key>id</key>
-      <value>fractional_resampler_xx_0</value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>type</key>
-      <value>complex</value>
-    </param>
-    <param>
-      <key>phase_shift</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>resamp_ratio</key>
-      <value>mod_bw_slider/(samp_rate/50)</value>
-    </param>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>affinity</key>
-      <value></value>
-    </param>
-    <param>
-      <key>minoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>maxoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(307, 369)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-  </block>
-  <block>
     <key>analog_const_source_x</key>
     <param>
       <key>id</key>
@@ -2346,65 +2299,6 @@
     <param>
       <key>_coordinate</key>
       <value>(468, 732)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-  </block>
-  <block>
-    <key>blks2_selector</key>
-    <param>
-      <key>id</key>
-      <value>blks2_selector_0_0_0</value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>type</key>
-      <value>complex</value>
-    </param>
-    <param>
-      <key>num_inputs</key>
-      <value>2</value>
-    </param>
-    <param>
-      <key>num_outputs</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>input_index</key>
-      <value>int(mod_type_chooser==3)</value>
-    </param>
-    <param>
-      <key>output_index</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>vlen</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>affinity</key>
-      <value></value>
-    </param>
-    <param>
-      <key>minoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>maxoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(554, 279)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -3684,49 +3578,6 @@
     </param>
   </block>
   <block>
-    <key>blocks_null_sink</key>
-    <param>
-      <key>id</key>
-      <value>blocks_null_sink_0</value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>type</key>
-      <value>complex</value>
-    </param>
-    <param>
-      <key>vlen</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>num_inputs</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>bus_conns</key>
-      <value>[[0,],]</value>
-    </param>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>affinity</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(747, 176)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-  </block>
-  <block>
     <key>blocks_multiply_const_vxx</key>
     <param>
       <key>id</key>
@@ -3951,45 +3802,6 @@
     </param>
   </block>
   <block>
-    <key>variable_qtgui_label</key>
-    <param>
-      <key>id</key>
-      <value>variable_qtgui_label_0</value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>label</key>
-      <value>&lt;b&gt;USRP DSP Operation, Program #CLABS-3D&lt;/b&gt;&lt;br&gt;&lt;b&gt;RF input spectrum&lt;/b&gt;</value>
-    </param>
-    <param>
-      <key>type</key>
-      <value>raw</value>
-    </param>
-    <param>
-      <key>value</key>
-      <value>""</value>
-    </param>
-    <param>
-      <key>gui_hint</key>
-      <value>0,0</value>
-    </param>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(920, 14)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-  </block>
-  <block>
     <key>blks2_selector</key>
     <param>
       <key>id</key>
@@ -4049,6 +3861,57 @@
     </param>
   </block>
   <block>
+    <key>qtgui_tab_widget</key>
+    <param>
+      <key>id</key>
+      <value>tab_grid_widget</value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>num_tabs</key>
+      <value>2</value>
+    </param>
+    <param>
+      <key>label0</key>
+      <value>RF controls</value>
+    </param>
+    <param>
+      <key>label1</key>
+      <value>Test modulator controls</value>
+    </param>
+    <param>
+      <key>label2</key>
+      <value></value>
+    </param>
+    <param>
+      <key>label3</key>
+      <value>Tab 3</value>
+    </param>
+    <param>
+      <key>label4</key>
+      <value>Tab 4</value>
+    </param>
+    <param>
+      <key>gui_hint</key>
+      <value>3,0</value>
+    </param>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(1026, 576)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+  </block>
+  <block>
     <key>variable_qtgui_chooser</key>
     <param>
       <key>id</key>
@@ -4060,7 +3923,7 @@
     </param>
     <param>
       <key>label</key>
-      <value>Input source</value>
+      <value>Output</value>
     </param>
     <param>
       <key>type</key>
@@ -4148,42 +4011,30 @@
     </param>
   </block>
   <block>
-    <key>qtgui_tab_widget</key>
+    <key>variable_qtgui_label</key>
     <param>
       <key>id</key>
-      <value>tab_grid_widget</value>
+      <value>variable_qtgui_label_0</value>
     </param>
     <param>
       <key>_enabled</key>
       <value>True</value>
     </param>
     <param>
-      <key>num_tabs</key>
-      <value>2</value>
+      <key>label</key>
+      <value>&lt;b&gt;USRP DSP Operation, Program #CLABS-3E&lt;/b&gt;&lt;br&gt;&lt;b&gt;RF input spectrum&lt;/b&gt;</value>
     </param>
     <param>
-      <key>label0</key>
-      <value>RF controls</value>
+      <key>type</key>
+      <value>raw</value>
     </param>
     <param>
-      <key>label1</key>
-      <value>Test modulator controls</value>
-    </param>
-    <param>
-      <key>label2</key>
-      <value></value>
-    </param>
-    <param>
-      <key>label3</key>
-      <value>Tab 3</value>
-    </param>
-    <param>
-      <key>label4</key>
-      <value>Tab 4</value>
+      <key>value</key>
+      <value>""</value>
     </param>
     <param>
       <key>gui_hint</key>
-      <value>3,0</value>
+      <value>0,0</value>
     </param>
     <param>
       <key>alias</key>
@@ -4191,7 +4042,156 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1026, 576)</value>
+      <value>(920, 14)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+  </block>
+  <block>
+    <key>blks2_selector</key>
+    <param>
+      <key>id</key>
+      <value>blks2_selector_0_0_0</value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>complex</value>
+    </param>
+    <param>
+      <key>num_inputs</key>
+      <value>2</value>
+    </param>
+    <param>
+      <key>num_outputs</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>input_index</key>
+      <value>int(mod_type_chooser==3)</value>
+    </param>
+    <param>
+      <key>output_index</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>vlen</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>minoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>maxoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(554, 279)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+  </block>
+  <block>
+    <key>blocks_null_sink</key>
+    <param>
+      <key>id</key>
+      <value>blocks_null_sink_0</value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>complex</value>
+    </param>
+    <param>
+      <key>vlen</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>num_inputs</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>bus_conns</key>
+      <value>[[0,],]</value>
+    </param>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(747, 176)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+  </block>
+  <block>
+    <key>fractional_resampler_xx</key>
+    <param>
+      <key>id</key>
+      <value>fractional_resampler_xx_0</value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>complex</value>
+    </param>
+    <param>
+      <key>phase_shift</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>resamp_ratio</key>
+      <value>mod_bw_slider/(samp_rate/50)</value>
+    </param>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>minoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>maxoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(307, 369)</value>
     </param>
     <param>
       <key>_rotation</key>
