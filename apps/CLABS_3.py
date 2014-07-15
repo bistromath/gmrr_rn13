@@ -79,9 +79,9 @@ class clabs_tcp_ctrl(threading.Thread):
     def _set_power(self, arg):
         if arg not in range(2):
             return 2
-        print "Setting output %s" % (("ON", "OFF")[arg])
-        self._tb.set_off_switch(arg)
-        self._tb.set_off_switch_chooser(arg)
+        print "Setting output %s" % (("ON", "OFF")[int(arg==0)])
+        self._tb.set_off_switch(int(arg==0))
+#        self._tb.set_off_switch_chooser(int(arg==0))
         return 0
 
     def _set_input_source(self, arg):
