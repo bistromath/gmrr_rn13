@@ -44,7 +44,7 @@ class clabs_tcp_ctrl(threading.Thread):
 
         self._cmdlist = {"IF": (self._set_input_freq, float), "OF": (self._set_output_freq, float),
                          "ON": (self._set_power, int), "IS": (self._set_input_source, int),
-                         "BW": (self._set_test_bandwidth, float), "TF": (self._set_offset_freq, float),
+                         "SR": (self._set_test_bandwidth, float), "TF": (self._set_offset_freq, float),
                          "ML": (self._set_mod_level, float), "CL": (self._set_carrier_level, float),
                          "MF": (self._set_mod_freq, float), "MT": (self._set_mod_type, int),
                          "MW": (self._set_mod_waveform, int), "DG": (self._set_driver_gain, float),
@@ -93,7 +93,7 @@ class clabs_tcp_ctrl(threading.Thread):
         return 0
 
     def _set_test_bandwidth(self, arg):
-        print "Setting downloadable waveform bandwidth to %fHz" % arg
+        print "Setting downloadable waveform sample rate to %fsps" % arg
         self._tb.set_mod_bw_slider(arg)
         Qt.QMetaObject.invokeMethod(self._tb._mod_bw_slider_slider, "setValue", Qt.Q_ARG("double", arg))
         return 0
