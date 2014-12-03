@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<block>
+  <name>predistorter</name>
+  <key>gmrr_rn13_predistorter</key>
+  <category>gmrr_rn13</category>
+  <import>import gmrr_rn13</import>
+  <make>gmrr_rn13.predistorter($filename)</make>
+  <callback>load($filename)</callback>
+  <!-- Make one 'param' node for every Parameter you want settable from the GUI.
+       Sub-nodes:
+       * name
+       * key (makes the value accessible as $keyname, e.g. in the make node)
+       * type -->
+  <param>
+    <name>Predistorter filename</name>
+    <key>filename</key>
+    <type>file_open</type>
+  </param>
+  <param>
+    <name>Num Inputs</name>
+    <key>num_inputs</key>
+    <value>4</value>
+    <type>int</type>
+  </param>
+
+  <check>$num_inputs &gt; 0</check>
+
+  <!-- Make one 'sink' node per input. Sub-nodes:
+       * name (an identifier for the GUI)
+       * type
+       * vlen
+       * optional (set to 1 for optional inputs) -->
+  <sink>
+    <name>in</name>
+    <type>float</type>
+    <nports>$num_inputs</nports>
+  </sink>
+
+  <!-- Make one 'source' node per output. Sub-nodes:
+       * name (an identifier for the GUI)
+       * type
+       * vlen
+       * optional (set to 1 for optional inputs) -->
+  <source>
+    <name>out</name>
+    <type>float</type>
+    <nports>$num_inputs</nports>
+  </source>
+</block>
