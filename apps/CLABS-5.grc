@@ -3860,49 +3860,6 @@
     </param>
   </block>
   <block>
-    <key>variable_function_probe</key>
-    <param>
-      <key>id</key>
-      <value>variable_function_probe_0</value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>value</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>block_id</key>
-      <value>_vpredistorter_title_label</value>
-    </param>
-    <param>
-      <key>function_name</key>
-      <value>setText</value>
-    </param>
-    <param>
-      <key>function_args</key>
-      <value>str(self.gmrr_rn13_predistorter_0.get_title())</value>
-    </param>
-    <param>
-      <key>poll_rate</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(552, 83)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-  </block>
-  <block>
     <key>variable_qtgui_label</key>
     <param>
       <key>id</key>
@@ -4404,6 +4361,49 @@
     <param>
       <key>_coordinate</key>
       <value>(816, 584)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+  </block>
+  <block>
+    <key>variable_function_probe</key>
+    <param>
+      <key>id</key>
+      <value>variable_function_probe_0</value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>block_id</key>
+      <value>_vpredistorter_title_label</value>
+    </param>
+    <param>
+      <key>function_name</key>
+      <value>setText</value>
+    </param>
+    <param>
+      <key>function_args</key>
+      <value>str(self.gmrr_rn13_predistorter_0.get_title())</value>
+    </param>
+    <param>
+      <key>poll_rate</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(552, 83)</value>
     </param>
     <param>
       <key>_rotation</key>
