@@ -28,6 +28,7 @@ import threading
 import select
 import Queue
 import struct
+from os.path import expanduser
 
 class clabs_tcp_ctrl(threading.Thread):
     def __init__(self, tb, port):
@@ -269,8 +270,8 @@ if __name__ == '__main__':
     parser.add_option("", "--baseband-gain", dest="baseband_gain", type="eng_float", default=eng_notation.num_to_str(1),
         help="Set baseband_gain [default=%default]")
     parser.add_option("", "--port", type="intx", default=52001, help="Set TCP port to listen on [default=%default]")
-    parser.add_option("", "--filename", type="string", default="/opt/DL10.TXT", help="Set test waveform file source")
-    parser.add_option("", "--predistorter", type="string", default="/opt/EXPD1.txt", help="Set predistortion table filename")
+    parser.add_option("", "--filename", type="string", default=expanduser("~") + "/rn13_files/" + "DLWF.txt", help="Set test waveform file source")
+    parser.add_option("", "--predistorter", type="string", default=expanduser("~") + "/rn13_files/" + "Predistort.txt", help="Set predistortion table filename")
     (options, args) = parser.parse_args()
     Qt.QApplication.setGraphicsSystem(gr.prefs().get_string('qtgui','style','raster'))
     qapp = Qt.QApplication(sys.argv)
