@@ -69,6 +69,33 @@
     <key>variable</key>
     <param>
       <key>id</key>
+      <value>initial_predistorter</value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>expanduser("~") + "/rn13_files/" + "Predistort.txt"</value>
+    </param>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(80, 667)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+  </block>
+  <block>
+    <key>variable</key>
+    <param>
+      <key>id</key>
       <value>select</value>
     </param>
     <param>
@@ -4328,7 +4355,7 @@
     </param>
     <param>
       <key>value</key>
-      <value>expanduser("~") + "/rn13_files/" + "Predistort.txt"</value>
+      <value>initial_predistorter</value>
     </param>
     <param>
       <key>gui_hint</key>
