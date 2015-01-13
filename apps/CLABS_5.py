@@ -62,6 +62,8 @@ class clabs_tcp_ctrl(threading.Thread):
                 unitarg = float(arg)
             elif self._cmdlist[cmd][1] is int:
                 unitarg = int(arg)
+            elif self._cmdlist[cmd][1] is str:
+                unitarg = str(arg).strip()
             else:
                 return 1
             retval = self._cmdlist[cmd][0](unitarg)
