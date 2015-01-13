@@ -51,7 +51,8 @@ class clabs_tcp_ctrl(threading.Thread):
                          "MW": (self._set_mod_waveform, int), "DG": (self._set_driver_gain, float),
                          "RG": (self._set_rf_gain, float), "FG": (self._set_final_gain, float),
                          "PG": (self._set_predriver_gain, float), "IG": (self._set_input_gain, float),
-                         "SQ": (self._set_squelch, float), "TO": (self._set_test_output, int)}
+                         "SQ": (self._set_squelch, float), "TO": (self._set_test_output, int),
+                         "PD": (self._set_predistorter, str)}
 
     def parse(self, cmd, arg):
         if not (cmd in self._cmdlist):
@@ -171,6 +172,11 @@ class clabs_tcp_ctrl(threading.Thread):
         print "Setting squelch level to %f" % arg
         self._tb.set_squelch(arg)
         Qt.QMetaObject.invokeMethod(self._tb._squelch_slider, "setValue", Qt.Q_ARG("double", arg))
+        return 0
+
+    def _set_predistorter(self, arg):
+        print "Setting predistortion file to " + arg
+        self._tb.set_predistorter(arg)
         return 0
 
     def _set_test_output(self, arg):
