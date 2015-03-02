@@ -69,7 +69,8 @@ class clabs_tcp_ctrl(threading.Thread):
                 return 1
             retval = self._cmdlist[cmd][0](unitarg)
             return retval
-        except:
+        except Exception as e:
+            print e
             return 2
 
     def _set_input_freq(self, arg):
@@ -144,13 +145,13 @@ class clabs_tcp_ctrl(threading.Thread):
     def _set_driver_gain(self, arg):
         print "Setting driver gain to %f" % arg
         self._tb.set_baseband_gain(arg)
-        Qt.QMetaObject.invokeMethod(self._tb._baseband_gain_slider_slider, "setValue", Qt.Q_ARG("double", arg))
+        Qt.QMetaObject.invokeMethod(self._tb._baseband_gain_slider, "setValue", Qt.Q_ARG("double", arg))
         return 0
 
     def _set_rf_gain(self, arg):
         print "Setting RF input gain to %f" % arg
         self._tb.set_rxgain(arg)
-        Qt.QMetaObject.invokeMethod(self._tb._rxgain_slider_slider, "setValue", Qt.Q_ARG("double", arg))
+        Qt.QMetaObject.invokeMethod(self._tb._rxgain_slider, "setValue", Qt.Q_ARG("double", arg))
         return 0
 
     def _set_final_gain(self, arg):
@@ -162,7 +163,7 @@ class clabs_tcp_ctrl(threading.Thread):
     def _set_predriver_gain(self, arg):
         print "Setting predriver output gain to %f" % arg
         self._tb.set_txgain(arg)
-        Qt.QMetaObject.invokeMethod(self._tb._txgain_slider_slider, "setValue", Qt.Q_ARG("double", arg))
+        Qt.QMetaObject.invokeMethod(self._tb._txgain_slider, "setValue", Qt.Q_ARG("double", arg))
         return 0
 
     def _set_input_gain(self, arg):
@@ -302,19 +303,40 @@ if __name__ == '__main__':
     parser.add_option("", "--port", type="intx", default=52001, help="Set TCP port to listen on [default=%default]")
     parser.add_option("", "--filename", type="string", default=expanduser("~") + "/rn13_files/" + "DLWF.txt", help="Set test waveform file source")
     parser.add_option("", "--predistorter", type="string", default=expanduser("~") + "/rn13_files/" + "Predistort.txt", help="Set predistortion table filename")
+    parser.add_option("", "--preset", type="string", default=None, help="Load a presets file on startup (specify filename)")
     (options, args) = parser.parse_args()
     Qt.QApplication.setGraphicsSystem(gr.prefs().get_string('qtgui','style','raster'))
     qapp = Qt.QApplication(sys.argv)
     tb = CLABS_6_init(initial_txgain=options.txgain, rxfreq=options.rxfreq, samp_rate=options.samp_rate, initial_rxgain=options.rxgain, txfreq=options.txfreq, initial_baseband_gain=options.baseband_gain, filename=options.filename)
+    tb.start()
+    tb.show()
     tb._predistorter_line_edit.setText(options.predistorter)
     tb.set_predistorter(options.predistorter)
     tcp_server = clabs_tcp_ctrl(tb, options.port)
-    tcp_server.start()
     tcp_server._set_predriver_delay(options.predriver_delay)
     tcp_server._set_drive_delay(options.drive_delay)
     tcp_server._set_final_delay(options.final_delay)
-    tb.start()
-    tb.show()
+
+    #read presets file, if applicable
+    if options.preset is not None:
+        try:
+            f = open(options.preset, 'r')
+        except IOError as e:
+            print e
+            sys.exit(0)
+
+        for line in f:
+            if line[0:2].isalpha():
+                cmd = line[0:2]
+                arg = line[3:]
+
+                retstr = "%s " % line[0:2]
+                retstr += str(tcp_server.parse(cmd, arg))
+                print retstr
+
+        f.close()
+
+    tcp_server.start()
     def quitting():
         tb.stop()
         tb.wait()
