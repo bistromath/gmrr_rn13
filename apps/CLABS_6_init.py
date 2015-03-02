@@ -3,7 +3,7 @@
 # Gnuradio Python Flow Graph
 # Title: USRP DSP Operation, Program #CLABS-6A
 # Author: Nick Foster
-# Generated: Mon Mar  2 09:49:29 2015
+# Generated: Mon Mar  2 11:24:18 2015
 ##################################################
 
 # Call XInitThreads as the _very_ first thing.
@@ -611,12 +611,10 @@ class CLABS_6_init(gr.top_block, Qt.QWidget):
         self.fractional_resampler_xx_0 = filter.fractional_resampler_cc(0, float(mod_bw_slider)/samp_rate)
         self.fir_filter_xxx_0_2 = filter.fir_filter_fff(1, ([final_delay%1]+[1-(final_delay%1)]+[0]*int(final_delay)))
         self.fir_filter_xxx_0_2.declare_sample_delay(0)
-        self.fir_filter_xxx_0_1 = filter.fir_filter_fff(1, ([predriver_delay%1]+[1-(predriver_delay%1)]+[0]*int(predriver_delay)))
-        self.fir_filter_xxx_0_1.declare_sample_delay(0)
+        self.fir_filter_xxx_0_0_0 = filter.fir_filter_ccf(1, ([predriver_delay%1]+[1-(predriver_delay%1)]+[0]*int(predriver_delay)))
+        self.fir_filter_xxx_0_0_0.declare_sample_delay(0)
         self.fir_filter_xxx_0_0 = filter.fir_filter_fff(1, ([drive_delay%1]+[1-(drive_delay%1)]+[0]*int(drive_delay)))
         self.fir_filter_xxx_0_0.declare_sample_delay(0)
-        self.fir_filter_xxx_0 = filter.fir_filter_fff(1, ([predriver_delay%1]+[1-(predriver_delay%1)]+[0]*int(predriver_delay)))
-        self.fir_filter_xxx_0.declare_sample_delay(0)
         self.blocks_null_sink_0 = blocks.null_sink(gr.sizeof_gr_complex*1)
         self.blocks_multiply_xx_0 = blocks.multiply_vcc(1)
         self.blocks_multiply_const_vxx_1 = blocks.multiply_const_vcc((digital_input_gain, ))
@@ -687,16 +685,15 @@ class CLABS_6_init(gr.top_block, Qt.QWidget):
         self.connect((self.blocks_float_to_complex_1, 0), (self.blocks_multiply_xx_0, 1))    
         self.connect((self.blocks_multiply_const_vxx_0, 0), (self.analog_rail_ff_0, 0))    
         self.connect((self.blocks_multiply_const_vxx_1, 0), (self.blks2_selector_0_0, 0))    
-        self.connect((self.blocks_multiply_xx_0, 0), (self.uhd_usrp_sink_0_0, 0))    
-        self.connect((self.fir_filter_xxx_0, 0), (self.blocks_float_to_complex_1, 0))    
+        self.connect((self.blocks_multiply_xx_0, 0), (self.fir_filter_xxx_0_0_0, 0))    
         self.connect((self.fir_filter_xxx_0_0, 0), (self.blocks_float_to_complex_0, 1))    
-        self.connect((self.fir_filter_xxx_0_1, 0), (self.blocks_float_to_complex_1, 1))    
+        self.connect((self.fir_filter_xxx_0_0_0, 0), (self.uhd_usrp_sink_0_0, 0))    
         self.connect((self.fir_filter_xxx_0_2, 0), (self.blocks_float_to_complex_0, 0))    
         self.connect((self.fractional_resampler_xx_0, 0), (self.blks2_selector_0_0_0, 1))    
         self.connect((self.gmrr_rn13_gmrr_waveform_src_0, 0), (self.fractional_resampler_xx_0, 0))    
-        self.connect((self.gmrr_rn13_predistorter_0, 0), (self.fir_filter_xxx_0, 0))    
+        self.connect((self.gmrr_rn13_predistorter_0, 0), (self.blocks_float_to_complex_1, 0))    
+        self.connect((self.gmrr_rn13_predistorter_0, 1), (self.blocks_float_to_complex_1, 1))    
         self.connect((self.gmrr_rn13_predistorter_0, 2), (self.fir_filter_xxx_0_0, 0))    
-        self.connect((self.gmrr_rn13_predistorter_0, 1), (self.fir_filter_xxx_0_1, 0))    
         self.connect((self.gmrr_rn13_predistorter_0, 3), (self.fir_filter_xxx_0_2, 0))    
         self.connect((self.test_src, 0), (self.blks2_selector_0_0_0, 0))    
         self.connect((self.uhd_usrp_source_0, 0), (self.blocks_multiply_const_vxx_1, 0))    
@@ -872,10 +869,9 @@ class CLABS_6_init(gr.top_block, Qt.QWidget):
 
     def set_predriver_delay(self, predriver_delay):
         self.predriver_delay = predriver_delay
-        self.fir_filter_xxx_0_1.set_taps(([self.predriver_delay%1]+[1-(self.predriver_delay%1)]+[0]*int(self.predriver_delay)))
-        self.fir_filter_xxx_0.set_taps(([self.predriver_delay%1]+[1-(self.predriver_delay%1)]+[0]*int(self.predriver_delay)))
         Qt.QMetaObject.invokeMethod(self._predriver_delay_counter, "setValue", Qt.Q_ARG("double", self.predriver_delay))
         Qt.QMetaObject.invokeMethod(self._predriver_delay_slider, "setValue", Qt.Q_ARG("double", self.predriver_delay))
+        self.fir_filter_xxx_0_0_0.set_taps(([self.predriver_delay%1]+[1-(self.predriver_delay%1)]+[0]*int(self.predriver_delay)))
 
     def get_predistorter(self):
         return self.predistorter
@@ -960,9 +956,9 @@ class CLABS_6_init(gr.top_block, Qt.QWidget):
 
     def set_drive_delay(self, drive_delay):
         self.drive_delay = drive_delay
-        self.fir_filter_xxx_0_0.set_taps(([self.drive_delay%1]+[1-(self.drive_delay%1)]+[0]*int(self.drive_delay)))
         Qt.QMetaObject.invokeMethod(self._drive_delay_counter, "setValue", Qt.Q_ARG("double", self.drive_delay))
         Qt.QMetaObject.invokeMethod(self._drive_delay_slider, "setValue", Qt.Q_ARG("double", self.drive_delay))
+        self.fir_filter_xxx_0_0.set_taps(([self.drive_delay%1]+[1-(self.drive_delay%1)]+[0]*int(self.drive_delay)))
 
     def get_digital_input_gain(self):
         return self.digital_input_gain

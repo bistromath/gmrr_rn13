@@ -303,7 +303,7 @@ if __name__ == '__main__':
     parser.add_option("", "--port", type="intx", default=52001, help="Set TCP port to listen on [default=%default]")
     parser.add_option("", "--filename", type="string", default=expanduser("~") + "/rn13_files/" + "DLWF.txt", help="Set test waveform file source")
     parser.add_option("", "--predistorter", type="string", default=expanduser("~") + "/rn13_files/" + "Predistort.txt", help="Set predistortion table filename")
-    parser.add_option("", "--preset", type="string", default=None, help="Load a presets file on startup (specify filename)")
+    parser.add_option("", "--preset", type="string", default=expanduser("~") + "/rn13_files/" + "CLABS_presets.txt", help="Load a presets file on startup (specify filename)")
     (options, args) = parser.parse_args()
     Qt.QApplication.setGraphicsSystem(gr.prefs().get_string('qtgui','style','raster'))
     qapp = Qt.QApplication(sys.argv)
