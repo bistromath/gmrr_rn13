@@ -69,33 +69,6 @@
     <key>variable</key>
     <param>
       <key>id</key>
-      <value>select</value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>value</key>
-      <value>selector_chooser</value>
-    </param>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(128, 139)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-  </block>
-  <block>
-    <key>variable</key>
-    <param>
-      <key>id</key>
       <value>initial_predistorter</value>
     </param>
     <param>
@@ -113,6 +86,33 @@
     <param>
       <key>_coordinate</key>
       <value>(184, 691)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+  </block>
+  <block>
+    <key>variable</key>
+    <param>
+      <key>id</key>
+      <value>select</value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>selector_chooser</value>
+    </param>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(128, 139)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -4827,7 +4827,7 @@
     </param>
     <param>
       <key>taps</key>
-      <value>[0]*int(drive_delay) + [drive_delay%1]+[1-(drive_delay%1)]  + [0]*int(100-drive_delay)</value>
+      <value>[0]*int(drive_delay) + [1-(drive_delay%1)]  +[drive_delay%1]+ [0]*int(100-drive_delay)</value>
     </param>
     <param>
       <key>samp_delay</key>
@@ -4878,7 +4878,7 @@
     </param>
     <param>
       <key>taps</key>
-      <value>[0]*int(final_delay) + [final_delay%1]+[1-(final_delay%1)]  + [0]*int(100-final_delay)</value>
+      <value>[0]*int(final_delay) +[1-(final_delay%1)]  + [final_delay%1]+ [0]*int(100-final_delay)</value>
     </param>
     <param>
       <key>samp_delay</key>
@@ -4929,7 +4929,7 @@
     </param>
     <param>
       <key>taps</key>
-      <value>[0]*int(predriver_delay) + [predriver_delay%1]+[1-(predriver_delay%1)]  + [0]*int(100-predriver_delay)</value>
+      <value>[0]*int(predriver_delay) + [1-(predriver_delay%1)]  + [predriver_delay%1]+[0]*int(100-predriver_delay)</value>
     </param>
     <param>
       <key>samp_delay</key>
