@@ -1,8 +1,8 @@
-//This is a comment
-#this is also a comment
-PG 1.01
+//Standard gains, no delays
+#
+PG 10.0
 DG 1.0
-FG 0.99
-DP 3.5
-DD 0.1
+FG 1.0
+DP 0.0
+DD 0.0
 DF 0.0
