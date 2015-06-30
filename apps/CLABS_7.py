@@ -373,6 +373,8 @@ if __name__ == '__main__':
         of.write("#\tNumber of averages: %i\n" % navgs)
         of.write("#\tNumber of samples per average: %i\n" % nperavg)
 
+        of.write("#\tPredistorter filename: %s\n" % tb.get_predistorter())
+
         of.write("#LEVEL\tAMPLITUDE\tPHASE\n")
 
         #step through cal steps while recording
