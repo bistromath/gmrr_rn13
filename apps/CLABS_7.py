@@ -7,7 +7,7 @@
 ##################################################
 
 from PyQt4 import Qt
-from PyQt4.QtCore import QObject, pyqtSlot
+from PyQt4.QtCore import QObject, pyqtSlot, QThread
 from gnuradio import analog
 from gnuradio import blocks
 from gnuradio import eng_notation
@@ -310,100 +310,108 @@ if __name__ == '__main__':
     Qt.QApplication.setGraphicsSystem(gr.prefs().get_string('qtgui','style','raster'))
     qapp = Qt.QApplication(sys.argv)
     tb = CLABS_7_init(initial_txgain=options.txgain, rxfreq=options.rxfreq, samp_rate=options.samp_rate, initial_rxgain=options.rxgain, txfreq=options.txfreq, initial_baseband_gain=options.baseband_gain, filename=options.filename)
+    cal_running = threading.Lock()
 
+    class cal_thread(QThread):
+        def __init__(self, tb):
+            self.tb = tb
+            super(cal_thread, self).__init__()
+
+        def run(self):
+            tb = self.tb
+            print "Beginning calibration..."
+            #create a cal output file with a timestamped name in ~/rn13_files/
+            #or just grab the filename from the dialog
+    #        filename = tb._calibrate_output_line_edit.text()
+            filename = expanduser("~") + "/rn13_files/" + "calibration_%s" % strftime("%Y-%m-%d_%H:%M:%S")
+
+            #switch to internal siggen
+            tb.set_select(1)
+
+            #enable output
+            tb.set_off_switch(0)
+
+            #set mod waveform to constant
+            tb.set_mod_wave_chooser(0)
+
+            #set mod type to CW
+            tb.set_mod_type_chooser(0)
+
+            #set modulation frequency to 5kHz
+            tb.set_tone_freq(5e3)
+            tb.set_mod_freq(0)
+
+            #set predistorter to Linear
+    #        tb.set_predistorter
+
+            #set delays to zero: predriver, final, drive
+            tb.set_predriver_delay(0)
+            tb.set_final_delay(0)
+            tb.set_drive_delay(0)
+
+            #retrieve num avgs, num samples/avg, min ampl, max ampl, ampl steps
+            navgs = int(tb._calibrate_N_line_edit.text())
+            nperavg = int(tb._calibrate_K_line_edit.text())
+            min_ampl = float(tb._calibrate_min_ampl_line_edit.text())
+            max_ampl = float(tb._calibrate_max_ampl_line_edit.text())
+            nsteps = int(tb._calibrate_num_steps_line_edit.text())
+
+            #write header to cal output file:
+            #date, time, USRP name, TX/RX freqs, CORDIC settings, RF in gain, predriver gain,
+            #final gain, driver gain, digital input gain,
+            of = open(filename, 'w')
+            of.write("#CLABS-7 calibration output file\n")
+            of.write("#Date: %s\n" % strftime("%Y-%m-%d %H:%M:%S"))
+            of.write("#Settings:\n")
+
+            uhd_id = dict(tb.uhd_usrp_sink_0_0.get_usrp_info())
+            of.write("#\tUSRP serial: %s\n" % uhd_id["mboard_serial"])
+            of.write("#\tRF DB serial: %s\n" % uhd_id["tx_serial"])
+
+            of.write("#\tTX RF frequency: %s\n" % tb.uhd_usrp_sink_0_0.get_center_freq())
+            of.write("#\tRX RF frequency: %s\n" % tb.uhd_usrp_source_0.get_center_freq())
+
+            of.write("#\tRX gain: %i\n" % tb.uhd_usrp_source_0.get_gain())
+            of.write("#\tTX gain: %i\n" % tb.uhd_usrp_sink_0_0.get_gain())
+            of.write("#\tDigital input gain: %i\n" % tb.get_digital_input_gain())
+
+            of.write("#\tMinimum amplitude: %f, maximum amplitude: %f, steps: %i\n" % (min_ampl, max_ampl, nsteps))
+            of.write("#\tNumber of averages: %i\n" % navgs)
+            of.write("#\tNumber of samples per average: %i\n" % nperavg)
+
+            of.write("#\tPredistorter filename: %s\n" % tb.get_predistorter())
+
+            of.write("#LEVEL\tAMPLITUDE\tPHASE\n")
+
+            #step through cal steps while recording
+            for ampl in numpy.linspace(min_ampl,max_ampl,nsteps):
+                print "Level: %f" % ampl
+                tb.set_carrier_level(ampl)
+                wait = raw_input("Press enter to continue...")
+                time.sleep(0.2)
+                for i in range(navgs):
+                    for j in range(nperavg):
+                        avg = numpy.mean(tb.calibrate_average_probe.level())
+                    print "I: %.2f Q: %.2f" % (avg.real, avg.imag)
+                    print "Magnitude: %f" % abs(avg)
+                    print "Phase: %f" % cmath.phase(avg)
+                    of.write("%f\t%f\t%f\n" % (ampl, abs(avg), cmath.phase(avg)))
+
+            #disable output
+            tb.set_off_switch(1)
+            #switch to external mode
+            tb.set_select(0)
+
+            #write cal data to file
+            print "Wrote calibration output to %s" % filename
+
+            #close cal file
+            of.close()
+
+    t = cal_thread(tb)
     def run_calibration():
-        print "Beginning calibration..."
-        #create a cal output file with a timestamped name in ~/rn13_files/
-        #or just grab the filename from the dialog
-#        filename = tb._calibrate_output_line_edit.text()
-        filename = expanduser("~") + "/rn13_files/" + "calibration_%s" % strftime("%Y-%m-%d_%H:%M:%S")
-
-
-        #switch to internal siggen
-        tb.set_select(1)
-
-        #enable output
-        tb.set_off_switch(0)
-
-        #set mod waveform to constant
-        tb.set_mod_wave_chooser(0)
-
-        #set mod type to CW
-        tb.set_mod_type_chooser(0)
-
-        #set modulation frequency to 5kHz
-        tb.set_tone_freq(5e3)
-        tb.set_mod_freq(0)
-
-        #set predistorter to Linear
-#        tb.set_predistorter
-
-        #set delays to zero: predriver, final, drive
-        tb.set_predriver_delay(0)
-        tb.set_final_delay(0)
-        tb.set_drive_delay(0)
-
-        #retrieve num avgs, num samples/avg, min ampl, max ampl, ampl steps
-        navgs = int(tb._calibrate_N_line_edit.text())
-        nperavg = int(tb._calibrate_K_line_edit.text())
-        min_ampl = float(tb._calibrate_min_ampl_line_edit.text())
-        max_ampl = float(tb._calibrate_max_ampl_line_edit.text())
-        nsteps = int(tb._calibrate_num_steps_line_edit.text())
-
-        #write header to cal output file:
-        #date, time, USRP name, TX/RX freqs, CORDIC settings, RF in gain, predriver gain,
-        #final gain, driver gain, digital input gain,
-        of = open(filename, 'w')
-        of.write("#CLABS-7 calibration output file\n")
-        of.write("#Date: %s\n" % strftime("%Y-%m-%d %H:%M:%S"))
-        of.write("#Settings:\n")
-
-        uhd_id = dict(tb.uhd_usrp_sink_0_0.get_usrp_info())
-        of.write("#\tUSRP serial: %s\n" % uhd_id["mboard_serial"])
-        of.write("#\tRF DB serial: %s\n" % uhd_id["tx_serial"])
-
-        of.write("#\tTX RF frequency: %s\n" % tb.uhd_usrp_sink_0_0.get_center_freq())
-        of.write("#\tRX RF frequency: %s\n" % tb.uhd_usrp_source_0.get_center_freq())
-
-        of.write("#\tRX gain: %i\n" % tb.uhd_usrp_source_0.get_gain())
-        of.write("#\tTX gain: %i\n" % tb.uhd_usrp_sink_0_0.get_gain())
-        of.write("#\tDigital input gain: %i\n" % tb.get_digital_input_gain())
-
-        of.write("#\tMinimum amplitude: %f, maximum amplitude: %f, steps: %i\n" % (min_ampl, max_ampl, nsteps))
-        of.write("#\tNumber of averages: %i\n" % navgs)
-        of.write("#\tNumber of samples per average: %i\n" % nperavg)
-
-        of.write("#\tPredistorter filename: %s\n" % tb.get_predistorter())
-
-        of.write("#LEVEL\tAMPLITUDE\tPHASE\n")
-
-        #step through cal steps while recording
-        for ampl in numpy.linspace(min_ampl,max_ampl,nsteps):
-            print "Level: %f" % ampl
-            tb.set_carrier_level(ampl)
-            time.sleep(0.2)
-            for i in range(navgs):
-                for j in range(nperavg):
-                    avg = numpy.mean(tb.calibrate_average_probe.level())
-                print "I: %.2f Q: %.2f" % (avg.real, avg.imag)
-                print "Magnitude: %f" % abs(avg)
-                print "Phase: %f" % cmath.phase(avg)
-                of.write("%f\t%f\t%f\n" % (ampl, abs(avg), cmath.phase(avg)))
-
-        #disable output
-        tb.set_off_switch(1)
-        #switch to external mode
-        tb.set_select(0)
-
-
-        #write cal data to file
-        print "Wrote calibration output to %s" % filename
-
-        #close cal file
-        of.close()
-
-
-
+        with cal_running:
+            t.start()
 
     #hook up "start calibration" button
     _calibrate_start_push_button = Qt.QPushButton("Start")
