@@ -1,21 +1,20 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 ##################################################
-# Gnuradio Python Flow Graph
+# GNU Radio Python Flow Graph
 # Title: USRP DSP Operation, Program #CLABS-6A
 # Author: Nick Foster
-# Generated: Mon Mar  2 11:24:18 2015
+# Generated: Fri May  1 09:21:16 2015
 ##################################################
 
-# Call XInitThreads as the _very_ first thing.
-# After some Qt import, it's too late
-import ctypes
-import sys
-if sys.platform.startswith('linux'):
-    try:
-        x11 = ctypes.cdll.LoadLibrary('libX11.so')
-        x11.XInitThreads()
-    except:
-        print "Warning: failed to XInitThreads()"
+if __name__ == '__main__':
+    import ctypes
+    import sys
+    if sys.platform.startswith('linux'):
+        try:
+            x11 = ctypes.cdll.LoadLibrary('libX11.so')
+            x11.XInitThreads()
+        except:
+            print "Warning: failed to XInitThreads()"
 
 from PyQt4 import Qt
 from PyQt4.QtCore import QObject, pyqtSlot
@@ -28,10 +27,10 @@ from gnuradio import qtgui
 from gnuradio import uhd
 from gnuradio.eng_option import eng_option
 from gnuradio.filter import firdes
+from gnuradio.qtgui import Range, RangeWidget
 from grc_gnuradio import blks2 as grc_blks2
 from optparse import OptionParser
 from os.path import expanduser
-import PyQt4.Qwt5 as Qwt
 import gmrr_rn13
 import sip
 import sys
@@ -145,29 +144,9 @@ class CLABS_6_init(gr.top_block, Qt.QWidget):
         self._predistorter_line_edit.returnPressed.connect(
         	lambda: self.set_predistorter(str(str(self._predistorter_line_edit.text().toAscii()))))
         self.tab_grid_widget_grid_layout_3.addWidget(self._predistorter_tool_bar,  0,0)
-        self._txgain_layout = Qt.QVBoxLayout()
-        self._txgain_tool_bar = Qt.QToolBar(self)
-        self._txgain_layout.addWidget(self._txgain_tool_bar)
-        self._txgain_tool_bar.addWidget(Qt.QLabel("Predriver out gain (dB)"+": "))
-        class qwt_counter_pyslot(Qwt.QwtCounter):
-            def __init__(self, parent=None):
-                Qwt.QwtCounter.__init__(self, parent)
-            @pyqtSlot('double')
-            def setValue(self, value):
-                super(Qwt.QwtCounter, self).setValue(value)
-        self._txgain_counter = qwt_counter_pyslot()
-        self._txgain_counter.setRange(0, 45, 1)
-        self._txgain_counter.setNumButtons(2)
-        self._txgain_counter.setValue(self.txgain)
-        self._txgain_tool_bar.addWidget(self._txgain_counter)
-        self._txgain_counter.valueChanged.connect(self.set_txgain)
-        self._txgain_slider = Qwt.QwtSlider(None, Qt.Qt.Horizontal, Qwt.QwtSlider.BottomScale, Qwt.QwtSlider.BgSlot)
-        self._txgain_slider.setRange(0, 45, 1)
-        self._txgain_slider.setValue(self.txgain)
-        self._txgain_slider.setMinimumWidth(200)
-        self._txgain_slider.valueChanged.connect(self.set_txgain)
-        self._txgain_layout.addWidget(self._txgain_slider)
-        self.tab_grid_widget_grid_layout_0.addLayout(self._txgain_layout,  3,0)
+        self._txgain_range = Range(0, 45, 1, initial_txgain, 200)
+        self._txgain_win = RangeWidget(self._txgain_range, self.set_txgain, "Predriver out gain (dB)", "counter_slider")
+        self.tab_grid_widget_grid_layout_0.addWidget(self._txgain_win,  3,0)
         self._txfreq_slider_tool_bar = Qt.QToolBar(self)
         self._txfreq_slider_tool_bar.addWidget(Qt.QLabel("Predriver output freq"+": "))
         self._txfreq_slider_line_edit = Qt.QLineEdit(str(self.txfreq_slider))
@@ -175,75 +154,15 @@ class CLABS_6_init(gr.top_block, Qt.QWidget):
         self._txfreq_slider_line_edit.returnPressed.connect(
         	lambda: self.set_txfreq_slider(eng_notation.str_to_num(str(self._txfreq_slider_line_edit.text().toAscii()))))
         self.tab_grid_widget_grid_layout_0.addWidget(self._txfreq_slider_tool_bar,  1,0)
-        self._tone_freq_layout = Qt.QVBoxLayout()
-        self._tone_freq_tool_bar = Qt.QToolBar(self)
-        self._tone_freq_layout.addWidget(self._tone_freq_tool_bar)
-        self._tone_freq_tool_bar.addWidget(Qt.QLabel("Offset frequency"+": "))
-        class qwt_counter_pyslot(Qwt.QwtCounter):
-            def __init__(self, parent=None):
-                Qwt.QwtCounter.__init__(self, parent)
-            @pyqtSlot('double')
-            def setValue(self, value):
-                super(Qwt.QwtCounter, self).setValue(value)
-        self._tone_freq_counter = qwt_counter_pyslot()
-        self._tone_freq_counter.setRange(-samp_rate/2, samp_rate/2, 100)
-        self._tone_freq_counter.setNumButtons(2)
-        self._tone_freq_counter.setValue(self.tone_freq)
-        self._tone_freq_tool_bar.addWidget(self._tone_freq_counter)
-        self._tone_freq_counter.valueChanged.connect(self.set_tone_freq)
-        self._tone_freq_slider = Qwt.QwtSlider(None, Qt.Qt.Horizontal, Qwt.QwtSlider.BottomScale, Qwt.QwtSlider.BgSlot)
-        self._tone_freq_slider.setRange(-samp_rate/2, samp_rate/2, 100)
-        self._tone_freq_slider.setValue(self.tone_freq)
-        self._tone_freq_slider.setMinimumWidth(200)
-        self._tone_freq_slider.valueChanged.connect(self.set_tone_freq)
-        self._tone_freq_layout.addWidget(self._tone_freq_slider)
-        self.tab_grid_widget_grid_layout_1.addLayout(self._tone_freq_layout,  4,0)
-        self._squelch_layout = Qt.QVBoxLayout()
-        self._squelch_tool_bar = Qt.QToolBar(self)
-        self._squelch_layout.addWidget(self._squelch_tool_bar)
-        self._squelch_tool_bar.addWidget(Qt.QLabel("Squelch value (dBfs)"+": "))
-        class qwt_counter_pyslot(Qwt.QwtCounter):
-            def __init__(self, parent=None):
-                Qwt.QwtCounter.__init__(self, parent)
-            @pyqtSlot('double')
-            def setValue(self, value):
-                super(Qwt.QwtCounter, self).setValue(value)
-        self._squelch_counter = qwt_counter_pyslot()
-        self._squelch_counter.setRange(-90, 0, 1)
-        self._squelch_counter.setNumButtons(2)
-        self._squelch_counter.setValue(self.squelch)
-        self._squelch_tool_bar.addWidget(self._squelch_counter)
-        self._squelch_counter.valueChanged.connect(self.set_squelch)
-        self._squelch_slider = Qwt.QwtSlider(None, Qt.Qt.Horizontal, Qwt.QwtSlider.BottomScale, Qwt.QwtSlider.BgSlot)
-        self._squelch_slider.setRange(-90, 0, 1)
-        self._squelch_slider.setValue(self.squelch)
-        self._squelch_slider.setMinimumWidth(200)
-        self._squelch_slider.valueChanged.connect(self.set_squelch)
-        self._squelch_layout.addWidget(self._squelch_slider)
-        self.tab_grid_widget_grid_layout_2.addLayout(self._squelch_layout,  1,0)
-        self._rxgain_layout = Qt.QVBoxLayout()
-        self._rxgain_tool_bar = Qt.QToolBar(self)
-        self._rxgain_layout.addWidget(self._rxgain_tool_bar)
-        self._rxgain_tool_bar.addWidget(Qt.QLabel("RF in gain (dB)"+": "))
-        class qwt_counter_pyslot(Qwt.QwtCounter):
-            def __init__(self, parent=None):
-                Qwt.QwtCounter.__init__(self, parent)
-            @pyqtSlot('double')
-            def setValue(self, value):
-                super(Qwt.QwtCounter, self).setValue(value)
-        self._rxgain_counter = qwt_counter_pyslot()
-        self._rxgain_counter.setRange(0, 45, 1)
-        self._rxgain_counter.setNumButtons(2)
-        self._rxgain_counter.setValue(self.rxgain)
-        self._rxgain_tool_bar.addWidget(self._rxgain_counter)
-        self._rxgain_counter.valueChanged.connect(self.set_rxgain)
-        self._rxgain_slider = Qwt.QwtSlider(None, Qt.Qt.Horizontal, Qwt.QwtSlider.BottomScale, Qwt.QwtSlider.BgSlot)
-        self._rxgain_slider.setRange(0, 45, 1)
-        self._rxgain_slider.setValue(self.rxgain)
-        self._rxgain_slider.setMinimumWidth(100)
-        self._rxgain_slider.valueChanged.connect(self.set_rxgain)
-        self._rxgain_layout.addWidget(self._rxgain_slider)
-        self.tab_grid_widget_grid_layout_0.addLayout(self._rxgain_layout,  2,0)
+        self._tone_freq_range = Range(-samp_rate/2, samp_rate/2, 100, 0, 200)
+        self._tone_freq_win = RangeWidget(self._tone_freq_range, self.set_tone_freq, "Offset frequency", "counter_slider")
+        self.tab_grid_widget_grid_layout_1.addWidget(self._tone_freq_win,  4,0)
+        self._squelch_range = Range(-90, 0, 1, -60, 200)
+        self._squelch_win = RangeWidget(self._squelch_range, self.set_squelch, "Squelch value (dBfs)", "counter_slider")
+        self.tab_grid_widget_grid_layout_2.addWidget(self._squelch_win,  1,0)
+        self._rxgain_range = Range(0, 45, 1, initial_rxgain, 100)
+        self._rxgain_win = RangeWidget(self._rxgain_range, self.set_rxgain, "RF in gain (dB)", "counter_slider")
+        self.tab_grid_widget_grid_layout_0.addWidget(self._rxgain_win,  2,0)
         self._rxfreq_slider_tool_bar = Qt.QToolBar(self)
         self._rxfreq_slider_tool_bar.addWidget(Qt.QLabel("RF input freq"+": "))
         self._rxfreq_slider_line_edit = Qt.QLineEdit(str(self.rxfreq_slider))
@@ -251,29 +170,9 @@ class CLABS_6_init(gr.top_block, Qt.QWidget):
         self._rxfreq_slider_line_edit.returnPressed.connect(
         	lambda: self.set_rxfreq_slider(eng_notation.str_to_num(str(self._rxfreq_slider_line_edit.text().toAscii()))))
         self.tab_grid_widget_grid_layout_0.addWidget(self._rxfreq_slider_tool_bar,  0,0)
-        self._predriver_delay_layout = Qt.QVBoxLayout()
-        self._predriver_delay_tool_bar = Qt.QToolBar(self)
-        self._predriver_delay_layout.addWidget(self._predriver_delay_tool_bar)
-        self._predriver_delay_tool_bar.addWidget(Qt.QLabel("Predriver delay"+": "))
-        class qwt_counter_pyslot(Qwt.QwtCounter):
-            def __init__(self, parent=None):
-                Qwt.QwtCounter.__init__(self, parent)
-            @pyqtSlot('double')
-            def setValue(self, value):
-                super(Qwt.QwtCounter, self).setValue(value)
-        self._predriver_delay_counter = qwt_counter_pyslot()
-        self._predriver_delay_counter.setRange(0, 100, 0.01)
-        self._predriver_delay_counter.setNumButtons(2)
-        self._predriver_delay_counter.setValue(self.predriver_delay)
-        self._predriver_delay_tool_bar.addWidget(self._predriver_delay_counter)
-        self._predriver_delay_counter.valueChanged.connect(self.set_predriver_delay)
-        self._predriver_delay_slider = Qwt.QwtSlider(None, Qt.Qt.Horizontal, Qwt.QwtSlider.BottomScale, Qwt.QwtSlider.BgSlot)
-        self._predriver_delay_slider.setRange(0, 100, 0.01)
-        self._predriver_delay_slider.setValue(self.predriver_delay)
-        self._predriver_delay_slider.setMinimumWidth(200)
-        self._predriver_delay_slider.valueChanged.connect(self.set_predriver_delay)
-        self._predriver_delay_layout.addWidget(self._predriver_delay_slider)
-        self.tab_grid_widget_grid_layout_4.addLayout(self._predriver_delay_layout,  1,0)
+        self._predriver_delay_range = Range(0, 100, 0.01, 0, 200)
+        self._predriver_delay_win = RangeWidget(self._predriver_delay_range, self.set_predriver_delay, "Predriver delay", "counter_slider")
+        self.tab_grid_widget_grid_layout_4.addWidget(self._predriver_delay_win,  1,0)
         self._off_switch_options = (0, 1, )
         self._off_switch_labels = ("On", "Off", )
         self._off_switch_tool_bar = Qt.QToolBar(self)
@@ -310,191 +209,31 @@ class CLABS_6_init(gr.top_block, Qt.QWidget):
         self._mod_type_chooser_combo_box.currentIndexChanged.connect(
         	lambda i: self.set_mod_type_chooser(self._mod_type_chooser_options[i]))
         self.tab_grid_widget_grid_layout_1.addWidget(self._mod_type_chooser_tool_bar,  1,0)
-        self._mod_level_layout = Qt.QVBoxLayout()
-        self._mod_level_tool_bar = Qt.QToolBar(self)
-        self._mod_level_layout.addWidget(self._mod_level_tool_bar)
-        self._mod_level_tool_bar.addWidget(Qt.QLabel("Modulation level"+": "))
-        class qwt_counter_pyslot(Qwt.QwtCounter):
-            def __init__(self, parent=None):
-                Qwt.QwtCounter.__init__(self, parent)
-            @pyqtSlot('double')
-            def setValue(self, value):
-                super(Qwt.QwtCounter, self).setValue(value)
-        self._mod_level_counter = qwt_counter_pyslot()
-        self._mod_level_counter.setRange(0, 1, 0.01)
-        self._mod_level_counter.setNumButtons(2)
-        self._mod_level_counter.setValue(self.mod_level)
-        self._mod_level_tool_bar.addWidget(self._mod_level_counter)
-        self._mod_level_counter.valueChanged.connect(self.set_mod_level)
-        self._mod_level_slider = Qwt.QwtSlider(None, Qt.Qt.Horizontal, Qwt.QwtSlider.BottomScale, Qwt.QwtSlider.BgSlot)
-        self._mod_level_slider.setRange(0, 1, 0.01)
-        self._mod_level_slider.setValue(self.mod_level)
-        self._mod_level_slider.setMinimumWidth(200)
-        self._mod_level_slider.valueChanged.connect(self.set_mod_level)
-        self._mod_level_layout.addWidget(self._mod_level_slider)
-        self.tab_grid_widget_grid_layout_1.addLayout(self._mod_level_layout,  6,0)
-        self._mod_freq_layout = Qt.QVBoxLayout()
-        self._mod_freq_tool_bar = Qt.QToolBar(self)
-        self._mod_freq_layout.addWidget(self._mod_freq_tool_bar)
-        self._mod_freq_tool_bar.addWidget(Qt.QLabel("Modulation frequency"+": "))
-        class qwt_counter_pyslot(Qwt.QwtCounter):
-            def __init__(self, parent=None):
-                Qwt.QwtCounter.__init__(self, parent)
-            @pyqtSlot('double')
-            def setValue(self, value):
-                super(Qwt.QwtCounter, self).setValue(value)
-        self._mod_freq_counter = qwt_counter_pyslot()
-        self._mod_freq_counter.setRange(-50000, 50000, 100)
-        self._mod_freq_counter.setNumButtons(2)
-        self._mod_freq_counter.setValue(self.mod_freq)
-        self._mod_freq_tool_bar.addWidget(self._mod_freq_counter)
-        self._mod_freq_counter.valueChanged.connect(self.set_mod_freq)
-        self._mod_freq_slider = Qwt.QwtSlider(None, Qt.Qt.Horizontal, Qwt.QwtSlider.BottomScale, Qwt.QwtSlider.BgSlot)
-        self._mod_freq_slider.setRange(-50000, 50000, 100)
-        self._mod_freq_slider.setValue(self.mod_freq)
-        self._mod_freq_slider.setMinimumWidth(200)
-        self._mod_freq_slider.valueChanged.connect(self.set_mod_freq)
-        self._mod_freq_layout.addWidget(self._mod_freq_slider)
-        self.tab_grid_widget_grid_layout_1.addLayout(self._mod_freq_layout,  3,0)
-        self._mod_bw_slider_layout = Qt.QVBoxLayout()
-        self._mod_bw_slider_tool_bar = Qt.QToolBar(self)
-        self._mod_bw_slider_layout.addWidget(self._mod_bw_slider_tool_bar)
-        self._mod_bw_slider_tool_bar.addWidget(Qt.QLabel("Downloadable modulation sample rate"+": "))
-        class qwt_counter_pyslot(Qwt.QwtCounter):
-            def __init__(self, parent=None):
-                Qwt.QwtCounter.__init__(self, parent)
-            @pyqtSlot('double')
-            def setValue(self, value):
-                super(Qwt.QwtCounter, self).setValue(value)
-        self._mod_bw_slider_counter = qwt_counter_pyslot()
-        self._mod_bw_slider_counter.setRange(1000, samp_rate*50, 100)
-        self._mod_bw_slider_counter.setNumButtons(2)
-        self._mod_bw_slider_counter.setValue(self.mod_bw_slider)
-        self._mod_bw_slider_tool_bar.addWidget(self._mod_bw_slider_counter)
-        self._mod_bw_slider_counter.valueChanged.connect(self.set_mod_bw_slider)
-        self._mod_bw_slider_slider = Qwt.QwtSlider(None, Qt.Qt.Horizontal, Qwt.QwtSlider.BottomScale, Qwt.QwtSlider.BgSlot)
-        self._mod_bw_slider_slider.setRange(1000, samp_rate*50, 100)
-        self._mod_bw_slider_slider.setValue(self.mod_bw_slider)
-        self._mod_bw_slider_slider.setMinimumWidth(200)
-        self._mod_bw_slider_slider.valueChanged.connect(self.set_mod_bw_slider)
-        self._mod_bw_slider_layout.addWidget(self._mod_bw_slider_slider)
-        self.tab_grid_widget_grid_layout_1.addLayout(self._mod_bw_slider_layout,  8,0)
+        self._mod_level_range = Range(0, 1, 0.01, 1, 200)
+        self._mod_level_win = RangeWidget(self._mod_level_range, self.set_mod_level, "Modulation level", "counter_slider")
+        self.tab_grid_widget_grid_layout_1.addWidget(self._mod_level_win,  6,0)
+        self._mod_freq_range = Range(-50000, 50000, 100, 0, 200)
+        self._mod_freq_win = RangeWidget(self._mod_freq_range, self.set_mod_freq, "Modulation frequency", "counter_slider")
+        self.tab_grid_widget_grid_layout_1.addWidget(self._mod_freq_win,  3,0)
+        self._mod_bw_slider_range = Range(1000, samp_rate*50, 100, 1e6, 200)
+        self._mod_bw_slider_win = RangeWidget(self._mod_bw_slider_range, self.set_mod_bw_slider, "Downloadable modulation sample rate", "counter_slider")
+        self.tab_grid_widget_grid_layout_1.addWidget(self._mod_bw_slider_win,  8,0)
         self.gmrr_rn13_predistorter_0 = gmrr_rn13.predistorter(predistorter)
-        self._final_delay_layout = Qt.QVBoxLayout()
-        self._final_delay_tool_bar = Qt.QToolBar(self)
-        self._final_delay_layout.addWidget(self._final_delay_tool_bar)
-        self._final_delay_tool_bar.addWidget(Qt.QLabel("Final delay"+": "))
-        class qwt_counter_pyslot(Qwt.QwtCounter):
-            def __init__(self, parent=None):
-                Qwt.QwtCounter.__init__(self, parent)
-            @pyqtSlot('double')
-            def setValue(self, value):
-                super(Qwt.QwtCounter, self).setValue(value)
-        self._final_delay_counter = qwt_counter_pyslot()
-        self._final_delay_counter.setRange(0, 100, 0.01)
-        self._final_delay_counter.setNumButtons(2)
-        self._final_delay_counter.setValue(self.final_delay)
-        self._final_delay_tool_bar.addWidget(self._final_delay_counter)
-        self._final_delay_counter.valueChanged.connect(self.set_final_delay)
-        self._final_delay_slider = Qwt.QwtSlider(None, Qt.Qt.Horizontal, Qwt.QwtSlider.BottomScale, Qwt.QwtSlider.BgSlot)
-        self._final_delay_slider.setRange(0, 100, 0.01)
-        self._final_delay_slider.setValue(self.final_delay)
-        self._final_delay_slider.setMinimumWidth(200)
-        self._final_delay_slider.valueChanged.connect(self.set_final_delay)
-        self._final_delay_layout.addWidget(self._final_delay_slider)
-        self.tab_grid_widget_grid_layout_4.addLayout(self._final_delay_layout,  2,0)
-        self._envelope_gain_layout = Qt.QVBoxLayout()
-        self._envelope_gain_tool_bar = Qt.QToolBar(self)
-        self._envelope_gain_layout.addWidget(self._envelope_gain_tool_bar)
-        self._envelope_gain_tool_bar.addWidget(Qt.QLabel("Final gain (linear)"+": "))
-        class qwt_counter_pyslot(Qwt.QwtCounter):
-            def __init__(self, parent=None):
-                Qwt.QwtCounter.__init__(self, parent)
-            @pyqtSlot('double')
-            def setValue(self, value):
-                super(Qwt.QwtCounter, self).setValue(value)
-        self._envelope_gain_counter = qwt_counter_pyslot()
-        self._envelope_gain_counter.setRange(0, 20, 0.1)
-        self._envelope_gain_counter.setNumButtons(2)
-        self._envelope_gain_counter.setValue(self.envelope_gain)
-        self._envelope_gain_tool_bar.addWidget(self._envelope_gain_counter)
-        self._envelope_gain_counter.valueChanged.connect(self.set_envelope_gain)
-        self._envelope_gain_slider = Qwt.QwtSlider(None, Qt.Qt.Horizontal, Qwt.QwtSlider.BottomScale, Qwt.QwtSlider.BgSlot)
-        self._envelope_gain_slider.setRange(0, 20, 0.1)
-        self._envelope_gain_slider.setValue(self.envelope_gain)
-        self._envelope_gain_slider.setMinimumWidth(200)
-        self._envelope_gain_slider.valueChanged.connect(self.set_envelope_gain)
-        self._envelope_gain_layout.addWidget(self._envelope_gain_slider)
-        self.tab_grid_widget_grid_layout_0.addLayout(self._envelope_gain_layout,  4,0)
-        self._drive_delay_layout = Qt.QVBoxLayout()
-        self._drive_delay_tool_bar = Qt.QToolBar(self)
-        self._drive_delay_layout.addWidget(self._drive_delay_tool_bar)
-        self._drive_delay_tool_bar.addWidget(Qt.QLabel("Drive delay"+": "))
-        class qwt_counter_pyslot(Qwt.QwtCounter):
-            def __init__(self, parent=None):
-                Qwt.QwtCounter.__init__(self, parent)
-            @pyqtSlot('double')
-            def setValue(self, value):
-                super(Qwt.QwtCounter, self).setValue(value)
-        self._drive_delay_counter = qwt_counter_pyslot()
-        self._drive_delay_counter.setRange(0, 100, 0.01)
-        self._drive_delay_counter.setNumButtons(2)
-        self._drive_delay_counter.setValue(self.drive_delay)
-        self._drive_delay_tool_bar.addWidget(self._drive_delay_counter)
-        self._drive_delay_counter.valueChanged.connect(self.set_drive_delay)
-        self._drive_delay_slider = Qwt.QwtSlider(None, Qt.Qt.Horizontal, Qwt.QwtSlider.BottomScale, Qwt.QwtSlider.BgSlot)
-        self._drive_delay_slider.setRange(0, 100, 0.01)
-        self._drive_delay_slider.setValue(self.drive_delay)
-        self._drive_delay_slider.setMinimumWidth(200)
-        self._drive_delay_slider.valueChanged.connect(self.set_drive_delay)
-        self._drive_delay_layout.addWidget(self._drive_delay_slider)
-        self.tab_grid_widget_grid_layout_4.addLayout(self._drive_delay_layout,  3,0)
-        self._digital_input_gain_layout = Qt.QVBoxLayout()
-        self._digital_input_gain_tool_bar = Qt.QToolBar(self)
-        self._digital_input_gain_layout.addWidget(self._digital_input_gain_tool_bar)
-        self._digital_input_gain_tool_bar.addWidget(Qt.QLabel("Digital input gain (linear)"+": "))
-        class qwt_counter_pyslot(Qwt.QwtCounter):
-            def __init__(self, parent=None):
-                Qwt.QwtCounter.__init__(self, parent)
-            @pyqtSlot('double')
-            def setValue(self, value):
-                super(Qwt.QwtCounter, self).setValue(value)
-        self._digital_input_gain_counter = qwt_counter_pyslot()
-        self._digital_input_gain_counter.setRange(0, 100, 0.01)
-        self._digital_input_gain_counter.setNumButtons(2)
-        self._digital_input_gain_counter.setValue(self.digital_input_gain)
-        self._digital_input_gain_tool_bar.addWidget(self._digital_input_gain_counter)
-        self._digital_input_gain_counter.valueChanged.connect(self.set_digital_input_gain)
-        self._digital_input_gain_slider = Qwt.QwtSlider(None, Qt.Qt.Horizontal, Qwt.QwtSlider.BottomScale, Qwt.QwtSlider.BgSlot)
-        self._digital_input_gain_slider.setRange(0, 100, 0.01)
-        self._digital_input_gain_slider.setValue(self.digital_input_gain)
-        self._digital_input_gain_slider.setMinimumWidth(200)
-        self._digital_input_gain_slider.valueChanged.connect(self.set_digital_input_gain)
-        self._digital_input_gain_layout.addWidget(self._digital_input_gain_slider)
-        self.tab_grid_widget_grid_layout_0.addLayout(self._digital_input_gain_layout,  7,0)
-        self._carrier_level_layout = Qt.QVBoxLayout()
-        self._carrier_level_tool_bar = Qt.QToolBar(self)
-        self._carrier_level_layout.addWidget(self._carrier_level_tool_bar)
-        self._carrier_level_tool_bar.addWidget(Qt.QLabel("Carrier level"+": "))
-        class qwt_counter_pyslot(Qwt.QwtCounter):
-            def __init__(self, parent=None):
-                Qwt.QwtCounter.__init__(self, parent)
-            @pyqtSlot('double')
-            def setValue(self, value):
-                super(Qwt.QwtCounter, self).setValue(value)
-        self._carrier_level_counter = qwt_counter_pyslot()
-        self._carrier_level_counter.setRange(0, 1, 0.01)
-        self._carrier_level_counter.setNumButtons(2)
-        self._carrier_level_counter.setValue(self.carrier_level)
-        self._carrier_level_tool_bar.addWidget(self._carrier_level_counter)
-        self._carrier_level_counter.valueChanged.connect(self.set_carrier_level)
-        self._carrier_level_slider = Qwt.QwtSlider(None, Qt.Qt.Horizontal, Qwt.QwtSlider.BottomScale, Qwt.QwtSlider.BgSlot)
-        self._carrier_level_slider.setRange(0, 1, 0.01)
-        self._carrier_level_slider.setValue(self.carrier_level)
-        self._carrier_level_slider.setMinimumWidth(200)
-        self._carrier_level_slider.valueChanged.connect(self.set_carrier_level)
-        self._carrier_level_layout.addWidget(self._carrier_level_slider)
-        self.tab_grid_widget_grid_layout_1.addLayout(self._carrier_level_layout,  7,0)
+        self._final_delay_range = Range(0, 100, 0.01, 0, 200)
+        self._final_delay_win = RangeWidget(self._final_delay_range, self.set_final_delay, "Final delay", "counter_slider")
+        self.tab_grid_widget_grid_layout_4.addWidget(self._final_delay_win,  2,0)
+        self._envelope_gain_range = Range(0, 20, 0.1, 1, 200)
+        self._envelope_gain_win = RangeWidget(self._envelope_gain_range, self.set_envelope_gain, "Final gain (linear)", "counter_slider")
+        self.tab_grid_widget_grid_layout_0.addWidget(self._envelope_gain_win,  4,0)
+        self._drive_delay_range = Range(0, 100, 0.01, 0, 200)
+        self._drive_delay_win = RangeWidget(self._drive_delay_range, self.set_drive_delay, "Drive delay", "counter_slider")
+        self.tab_grid_widget_grid_layout_4.addWidget(self._drive_delay_win,  3,0)
+        self._carrier_level_range = Range(0, 1, 0.01, 1, 200)
+        self._carrier_level_win = RangeWidget(self._carrier_level_range, self.set_carrier_level, "Carrier level", "counter_slider")
+        self.tab_grid_widget_grid_layout_1.addWidget(self._carrier_level_win,  7,0)
+        self._baseband_gain_range = Range(0, 10, 0.01, initial_baseband_gain, 200)
+        self._baseband_gain_win = RangeWidget(self._baseband_gain_range, self.set_baseband_gain, "Driver gain (linear)", "counter_slider")
+        self.tab_grid_widget_grid_layout_0.addWidget(self._baseband_gain_win,  5,0)
         self._vpredistorter_title_tool_bar = Qt.QToolBar(self)
         
         if None:
@@ -584,6 +323,10 @@ class CLABS_6_init(gr.top_block, Qt.QWidget):
         self.qtgui_freq_sink_x_0.enable_autoscale(False)
         self.qtgui_freq_sink_x_0.enable_grid(False)
         self.qtgui_freq_sink_x_0.set_fft_average(1.0)
+        self.qtgui_freq_sink_x_0.enable_control_panel(False)
+        
+        if not True:
+          self.qtgui_freq_sink_x_0.disable_legend()
         
         if complex == type(float()):
           self.qtgui_freq_sink_x_0.set_plot_pos_half(not True)
@@ -609,15 +352,18 @@ class CLABS_6_init(gr.top_block, Qt.QWidget):
         self.top_grid_layout.addWidget(self._qtgui_freq_sink_x_0_win, 1,0)
         self.gmrr_rn13_gmrr_waveform_src_0 = gmrr_rn13.gmrr_waveform_src(filename)
         self.fractional_resampler_xx_0 = filter.fractional_resampler_cc(0, float(mod_bw_slider)/samp_rate)
-        self.fir_filter_xxx_0_2 = filter.fir_filter_fff(1, ([final_delay%1]+[1-(final_delay%1)]+[0]*int(final_delay)))
+        self.fir_filter_xxx_0_2 = filter.fir_filter_fff(1, ([0]*int(final_delay) +[1-(final_delay%1)]  + [final_delay%1]+ [0]*int(100-final_delay)))
         self.fir_filter_xxx_0_2.declare_sample_delay(0)
-        self.fir_filter_xxx_0_0_0 = filter.fir_filter_ccf(1, ([predriver_delay%1]+[1-(predriver_delay%1)]+[0]*int(predriver_delay)))
+        self.fir_filter_xxx_0_0_0 = filter.fir_filter_ccf(1, ([0]*int(predriver_delay) + [1-(predriver_delay%1)]  + [predriver_delay%1]+[0]*int(100-predriver_delay)))
         self.fir_filter_xxx_0_0_0.declare_sample_delay(0)
-        self.fir_filter_xxx_0_0 = filter.fir_filter_fff(1, ([drive_delay%1]+[1-(drive_delay%1)]+[0]*int(drive_delay)))
+        self.fir_filter_xxx_0_0 = filter.fir_filter_fff(1, ([0]*int(drive_delay) + [1-(drive_delay%1)]  +[drive_delay%1]+ [0]*int(100-drive_delay)))
         self.fir_filter_xxx_0_0.declare_sample_delay(0)
+        self._digital_input_gain_range = Range(0, 100, 0.01, 1, 200)
+        self._digital_input_gain_win = RangeWidget(self._digital_input_gain_range, self.set_digital_input_gain, "Digital input gain (linear)", "counter_slider")
+        self.tab_grid_widget_grid_layout_0.addWidget(self._digital_input_gain_win,  7,0)
         self.blocks_null_sink_0 = blocks.null_sink(gr.sizeof_gr_complex*1)
         self.blocks_multiply_xx_0 = blocks.multiply_vcc(1)
-        self.blocks_multiply_const_vxx_1 = blocks.multiply_const_vcc((digital_input_gain, ))
+        self.blocks_multiply_const_vxx_1 = blocks.multiply_const_vff((baseband_gain, ))
         self.blocks_multiply_const_vxx_0 = blocks.multiply_const_vff((envelope_gain, ))
         self.blocks_float_to_complex_1 = blocks.float_to_complex(1)
         self.blocks_float_to_complex_0 = blocks.float_to_complex(1)
@@ -637,29 +383,6 @@ class CLABS_6_init(gr.top_block, Qt.QWidget):
         	input_index=2 if off_switch==1 else select,
         	output_index=0,
         )
-        self._baseband_gain_layout = Qt.QVBoxLayout()
-        self._baseband_gain_tool_bar = Qt.QToolBar(self)
-        self._baseband_gain_layout.addWidget(self._baseband_gain_tool_bar)
-        self._baseband_gain_tool_bar.addWidget(Qt.QLabel("Driver gain (linear)"+": "))
-        class qwt_counter_pyslot(Qwt.QwtCounter):
-            def __init__(self, parent=None):
-                Qwt.QwtCounter.__init__(self, parent)
-            @pyqtSlot('double')
-            def setValue(self, value):
-                super(Qwt.QwtCounter, self).setValue(value)
-        self._baseband_gain_counter = qwt_counter_pyslot()
-        self._baseband_gain_counter.setRange(0, 10, 0.01)
-        self._baseband_gain_counter.setNumButtons(2)
-        self._baseband_gain_counter.setValue(self.baseband_gain)
-        self._baseband_gain_tool_bar.addWidget(self._baseband_gain_counter)
-        self._baseband_gain_counter.valueChanged.connect(self.set_baseband_gain)
-        self._baseband_gain_slider = Qwt.QwtSlider(None, Qt.Qt.Horizontal, Qwt.QwtSlider.BottomScale, Qwt.QwtSlider.BgSlot)
-        self._baseband_gain_slider.setRange(0, 10, 0.01)
-        self._baseband_gain_slider.setValue(self.baseband_gain)
-        self._baseband_gain_slider.setMinimumWidth(200)
-        self._baseband_gain_slider.valueChanged.connect(self.set_baseband_gain)
-        self._baseband_gain_layout.addWidget(self._baseband_gain_slider)
-        self.tab_grid_widget_grid_layout_0.addLayout(self._baseband_gain_layout,  5,0)
         self.analog_rail_ff_0 = analog.rail_ff(0, 1)
         self.analog_pwr_squelch_xx_0 = analog.pwr_squelch_cc(squelch, 1, 1, False)
         self.analog_phase_modulator_fc_0 = analog.phase_modulator_fc(1)
@@ -680,15 +403,15 @@ class CLABS_6_init(gr.top_block, Qt.QWidget):
         self.connect((self.blks2_selector_0_0, 0), (self.analog_pwr_squelch_xx_0, 0))    
         self.connect((self.blks2_selector_0_0_0, 0), (self.blks2_selector_0_0, 1))    
         self.connect((self.blocks_complex_to_arg_0, 0), (self.analog_phase_modulator_fc_0, 0))    
-        self.connect((self.blocks_complex_to_mag_0, 0), (self.blocks_multiply_const_vxx_0, 0))    
+        self.connect((self.blocks_complex_to_mag_0, 0), (self.analog_rail_ff_0, 0))    
         self.connect((self.blocks_float_to_complex_0, 0), (self.uhd_usrp_sink_0_0, 1))    
         self.connect((self.blocks_float_to_complex_1, 0), (self.blocks_multiply_xx_0, 1))    
-        self.connect((self.blocks_multiply_const_vxx_0, 0), (self.analog_rail_ff_0, 0))    
-        self.connect((self.blocks_multiply_const_vxx_1, 0), (self.blks2_selector_0_0, 0))    
+        self.connect((self.blocks_multiply_const_vxx_0, 0), (self.blocks_float_to_complex_0, 0))    
+        self.connect((self.blocks_multiply_const_vxx_1, 0), (self.blocks_float_to_complex_0, 1))    
         self.connect((self.blocks_multiply_xx_0, 0), (self.fir_filter_xxx_0_0_0, 0))    
-        self.connect((self.fir_filter_xxx_0_0, 0), (self.blocks_float_to_complex_0, 1))    
+        self.connect((self.fir_filter_xxx_0_0, 0), (self.blocks_multiply_const_vxx_1, 0))    
         self.connect((self.fir_filter_xxx_0_0_0, 0), (self.uhd_usrp_sink_0_0, 0))    
-        self.connect((self.fir_filter_xxx_0_2, 0), (self.blocks_float_to_complex_0, 0))    
+        self.connect((self.fir_filter_xxx_0_2, 0), (self.blocks_multiply_const_vxx_0, 0))    
         self.connect((self.fractional_resampler_xx_0, 0), (self.blks2_selector_0_0_0, 1))    
         self.connect((self.gmrr_rn13_gmrr_waveform_src_0, 0), (self.fractional_resampler_xx_0, 0))    
         self.connect((self.gmrr_rn13_predistorter_0, 0), (self.blocks_float_to_complex_1, 0))    
@@ -696,7 +419,7 @@ class CLABS_6_init(gr.top_block, Qt.QWidget):
         self.connect((self.gmrr_rn13_predistorter_0, 2), (self.fir_filter_xxx_0_0, 0))    
         self.connect((self.gmrr_rn13_predistorter_0, 3), (self.fir_filter_xxx_0_2, 0))    
         self.connect((self.test_src, 0), (self.blks2_selector_0_0_0, 0))    
-        self.connect((self.uhd_usrp_source_0, 0), (self.blocks_multiply_const_vxx_1, 0))    
+        self.connect((self.uhd_usrp_source_0, 0), (self.blks2_selector_0_0, 0))    
         self.connect((self.uhd_usrp_source_0, 0), (self.blocks_null_sink_0, 0))    
 
     def closeEvent(self, event):
@@ -765,9 +488,9 @@ class CLABS_6_init(gr.top_block, Qt.QWidget):
         self.samp_rate = samp_rate
         self.test_src.set_samp_rate(self.samp_rate)
         self.fractional_resampler_xx_0.set_resamp_ratio(float(self.mod_bw_slider)/self.samp_rate)
-        self.uhd_usrp_source_0.set_samp_rate(self.samp_rate)
         self.qtgui_freq_sink_x_0.set_frequency_range(self.rxfreq_slider, self.samp_rate)
         self.uhd_usrp_sink_0_0.set_samp_rate(self.samp_rate)
+        self.uhd_usrp_source_0.set_samp_rate(self.samp_rate)
 
     def get_selector_chooser(self):
         return self.selector_chooser
@@ -809,8 +532,6 @@ class CLABS_6_init(gr.top_block, Qt.QWidget):
 
     def set_txgain(self, txgain):
         self.txgain = txgain
-        Qt.QMetaObject.invokeMethod(self._txgain_counter, "setValue", Qt.Q_ARG("double", self.txgain))
-        Qt.QMetaObject.invokeMethod(self._txgain_slider, "setValue", Qt.Q_ARG("double", self.txgain))
         self.uhd_usrp_sink_0_0.set_gain(self.txgain, 0)
 
     def get_txfreq_slider(self):
@@ -827,8 +548,6 @@ class CLABS_6_init(gr.top_block, Qt.QWidget):
     def set_tone_freq(self, tone_freq):
         self.tone_freq = tone_freq
         self.test_src.set_freq(self.tone_freq)
-        Qt.QMetaObject.invokeMethod(self._tone_freq_counter, "setValue", Qt.Q_ARG("double", self.tone_freq))
-        Qt.QMetaObject.invokeMethod(self._tone_freq_slider, "setValue", Qt.Q_ARG("double", self.tone_freq))
 
     def get_squelch(self):
         return self.squelch
@@ -836,8 +555,6 @@ class CLABS_6_init(gr.top_block, Qt.QWidget):
     def set_squelch(self, squelch):
         self.squelch = squelch
         self.analog_pwr_squelch_xx_0.set_threshold(self.squelch)
-        Qt.QMetaObject.invokeMethod(self._squelch_counter, "setValue", Qt.Q_ARG("double", self.squelch))
-        Qt.QMetaObject.invokeMethod(self._squelch_slider, "setValue", Qt.Q_ARG("double", self.squelch))
 
     def get_select(self):
         return self.select
@@ -851,8 +568,6 @@ class CLABS_6_init(gr.top_block, Qt.QWidget):
 
     def set_rxgain(self, rxgain):
         self.rxgain = rxgain
-        Qt.QMetaObject.invokeMethod(self._rxgain_counter, "setValue", Qt.Q_ARG("double", self.rxgain))
-        Qt.QMetaObject.invokeMethod(self._rxgain_slider, "setValue", Qt.Q_ARG("double", self.rxgain))
         self.uhd_usrp_source_0.set_gain(self.rxgain, 0)
 
     def get_rxfreq_slider(self):
@@ -860,18 +575,16 @@ class CLABS_6_init(gr.top_block, Qt.QWidget):
 
     def set_rxfreq_slider(self, rxfreq_slider):
         self.rxfreq_slider = rxfreq_slider
-        self.uhd_usrp_source_0.set_center_freq(self.rxfreq_slider, 0)
         self.qtgui_freq_sink_x_0.set_frequency_range(self.rxfreq_slider, self.samp_rate)
         Qt.QMetaObject.invokeMethod(self._rxfreq_slider_line_edit, "setText", Qt.Q_ARG("QString", eng_notation.num_to_str(self.rxfreq_slider)))
+        self.uhd_usrp_source_0.set_center_freq(self.rxfreq_slider, 0)
 
     def get_predriver_delay(self):
         return self.predriver_delay
 
     def set_predriver_delay(self, predriver_delay):
         self.predriver_delay = predriver_delay
-        Qt.QMetaObject.invokeMethod(self._predriver_delay_counter, "setValue", Qt.Q_ARG("double", self.predriver_delay))
-        Qt.QMetaObject.invokeMethod(self._predriver_delay_slider, "setValue", Qt.Q_ARG("double", self.predriver_delay))
-        self.fir_filter_xxx_0_0_0.set_taps(([self.predriver_delay%1]+[1-(self.predriver_delay%1)]+[0]*int(self.predriver_delay)))
+        self.fir_filter_xxx_0_0_0.set_taps(([0]*int(self.predriver_delay) + [1-(self.predriver_delay%1)]  + [self.predriver_delay%1]+[0]*int(100-self.predriver_delay)))
 
     def get_predistorter(self):
         return self.predistorter
@@ -912,8 +625,6 @@ class CLABS_6_init(gr.top_block, Qt.QWidget):
     def set_mod_level(self, mod_level):
         self.mod_level = mod_level
         self.test_src.set_mod_level(self.mod_level)
-        Qt.QMetaObject.invokeMethod(self._mod_level_counter, "setValue", Qt.Q_ARG("double", self.mod_level))
-        Qt.QMetaObject.invokeMethod(self._mod_level_slider, "setValue", Qt.Q_ARG("double", self.mod_level))
 
     def get_mod_freq(self):
         return self.mod_freq
@@ -921,8 +632,6 @@ class CLABS_6_init(gr.top_block, Qt.QWidget):
     def set_mod_freq(self, mod_freq):
         self.mod_freq = mod_freq
         self.test_src.set_mod_freq(self.mod_freq)
-        Qt.QMetaObject.invokeMethod(self._mod_freq_counter, "setValue", Qt.Q_ARG("double", self.mod_freq))
-        Qt.QMetaObject.invokeMethod(self._mod_freq_slider, "setValue", Qt.Q_ARG("double", self.mod_freq))
 
     def get_mod_bw_slider(self):
         return self.mod_bw_slider
@@ -930,25 +639,19 @@ class CLABS_6_init(gr.top_block, Qt.QWidget):
     def set_mod_bw_slider(self, mod_bw_slider):
         self.mod_bw_slider = mod_bw_slider
         self.fractional_resampler_xx_0.set_resamp_ratio(float(self.mod_bw_slider)/self.samp_rate)
-        Qt.QMetaObject.invokeMethod(self._mod_bw_slider_counter, "setValue", Qt.Q_ARG("double", self.mod_bw_slider))
-        Qt.QMetaObject.invokeMethod(self._mod_bw_slider_slider, "setValue", Qt.Q_ARG("double", self.mod_bw_slider))
 
     def get_final_delay(self):
         return self.final_delay
 
     def set_final_delay(self, final_delay):
         self.final_delay = final_delay
-        self.fir_filter_xxx_0_2.set_taps(([self.final_delay%1]+[1-(self.final_delay%1)]+[0]*int(self.final_delay)))
-        Qt.QMetaObject.invokeMethod(self._final_delay_counter, "setValue", Qt.Q_ARG("double", self.final_delay))
-        Qt.QMetaObject.invokeMethod(self._final_delay_slider, "setValue", Qt.Q_ARG("double", self.final_delay))
+        self.fir_filter_xxx_0_2.set_taps(([0]*int(self.final_delay) +[1-(self.final_delay%1)]  + [self.final_delay%1]+ [0]*int(100-self.final_delay)))
 
     def get_envelope_gain(self):
         return self.envelope_gain
 
     def set_envelope_gain(self, envelope_gain):
         self.envelope_gain = envelope_gain
-        Qt.QMetaObject.invokeMethod(self._envelope_gain_counter, "setValue", Qt.Q_ARG("double", self.envelope_gain))
-        Qt.QMetaObject.invokeMethod(self._envelope_gain_slider, "setValue", Qt.Q_ARG("double", self.envelope_gain))
         self.blocks_multiply_const_vxx_0.set_k((self.envelope_gain, ))
 
     def get_drive_delay(self):
@@ -956,18 +659,13 @@ class CLABS_6_init(gr.top_block, Qt.QWidget):
 
     def set_drive_delay(self, drive_delay):
         self.drive_delay = drive_delay
-        Qt.QMetaObject.invokeMethod(self._drive_delay_counter, "setValue", Qt.Q_ARG("double", self.drive_delay))
-        Qt.QMetaObject.invokeMethod(self._drive_delay_slider, "setValue", Qt.Q_ARG("double", self.drive_delay))
-        self.fir_filter_xxx_0_0.set_taps(([self.drive_delay%1]+[1-(self.drive_delay%1)]+[0]*int(self.drive_delay)))
+        self.fir_filter_xxx_0_0.set_taps(([0]*int(self.drive_delay) + [1-(self.drive_delay%1)]  +[self.drive_delay%1]+ [0]*int(100-self.drive_delay)))
 
     def get_digital_input_gain(self):
         return self.digital_input_gain
 
     def set_digital_input_gain(self, digital_input_gain):
         self.digital_input_gain = digital_input_gain
-        Qt.QMetaObject.invokeMethod(self._digital_input_gain_counter, "setValue", Qt.Q_ARG("double", self.digital_input_gain))
-        Qt.QMetaObject.invokeMethod(self._digital_input_gain_slider, "setValue", Qt.Q_ARG("double", self.digital_input_gain))
-        self.blocks_multiply_const_vxx_1.set_k((self.digital_input_gain, ))
 
     def get_carrier_level(self):
         return self.carrier_level
@@ -975,16 +673,14 @@ class CLABS_6_init(gr.top_block, Qt.QWidget):
     def set_carrier_level(self, carrier_level):
         self.carrier_level = carrier_level
         self.test_src.set_carrier_level(self.carrier_level)
-        Qt.QMetaObject.invokeMethod(self._carrier_level_counter, "setValue", Qt.Q_ARG("double", self.carrier_level))
-        Qt.QMetaObject.invokeMethod(self._carrier_level_slider, "setValue", Qt.Q_ARG("double", self.carrier_level))
 
     def get_baseband_gain(self):
         return self.baseband_gain
 
     def set_baseband_gain(self, baseband_gain):
         self.baseband_gain = baseband_gain
-        Qt.QMetaObject.invokeMethod(self._baseband_gain_counter, "setValue", Qt.Q_ARG("double", self.baseband_gain))
-        Qt.QMetaObject.invokeMethod(self._baseband_gain_slider, "setValue", Qt.Q_ARG("double", self.baseband_gain))
+        self.blocks_multiply_const_vxx_1.set_k((self.baseband_gain, ))
+
 
 if __name__ == '__main__':
     parser = OptionParser(option_class=eng_option, usage="%prog: [options]")

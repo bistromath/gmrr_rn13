@@ -355,6 +355,8 @@ if __name__ == '__main__':
             min_ampl = float(tb._calibrate_min_ampl_line_edit.text())
             max_ampl = float(tb._calibrate_max_ampl_line_edit.text())
             nsteps = int(tb._calibrate_num_steps_line_edit.text())
+            fudge_factor = float(tb._calibrate_fudge_factor_line_edit.text())
+            pause_between_steps = tb._cal_pause_checkbox_check_box.checkState()
 
             #write header to cal output file:
             #date, time, USRP name, TX/RX freqs, CORDIC settings, RF in gain, predriver gain,
@@ -380,6 +382,7 @@ if __name__ == '__main__':
             of.write("#\tNumber of samples per average: %i\n" % nperavg)
 
             of.write("#\tPredistorter filename: %s\n" % tb.get_predistorter())
+            of.write("#\tFudge factor: %f\n" % fudge_factor)
 
             of.write("#LEVEL\tAMPLITUDE\tPHASE\n")
 
@@ -387,15 +390,16 @@ if __name__ == '__main__':
             for ampl in numpy.linspace(min_ampl,max_ampl,nsteps):
                 print "Level: %f" % ampl
                 tb.set_carrier_level(ampl)
-                wait = raw_input("Press enter to continue...")
+                if(pause_between_steps):
+                    wait = raw_input("Press enter to continue...")
                 time.sleep(0.2)
                 for i in range(navgs):
                     for j in range(nperavg):
                         avg = numpy.mean(tb.calibrate_average_probe.level())
                     print "I: %.2f Q: %.2f" % (avg.real, avg.imag)
-                    print "Magnitude: %f" % abs(avg)
+                    print "Magnitude: %f (%f with f.f.)" % (abs(avg), abs(avg)*fudge_factor)
                     print "Phase: %f" % cmath.phase(avg)
-                    of.write("%f\t%f\t%f\n" % (ampl, abs(avg), cmath.phase(avg)))
+                    of.write("%f\t%f\t%f\n" % (ampl, abs(avg)*fudge_factor, cmath.phase(avg)))
 
             #disable output
             tb.set_off_switch(1)
@@ -417,6 +421,8 @@ if __name__ == '__main__':
     _calibrate_start_push_button = Qt.QPushButton("Start")
     _calibrate_start_push_button.pressed.connect(run_calibration)
     tb.tab_grid_widget_grid_layout_5.addWidget(_calibrate_start_push_button,  1,1)
+    tb._cal_pause_checkbox_check_box = Qt.QCheckBox("Pause between steps")
+    tb.tab_grid_widget_grid_layout_5.addWidget(tb._cal_pause_checkbox_check_box,  1,2)
 
     tb.start()
     tb.show()
