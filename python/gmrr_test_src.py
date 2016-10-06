@@ -22,17 +22,21 @@ class gmrr_test_src(gr.hier_block2):
             gr.io_signature(1, 1, gr.sizeof_gr_complex))
         self._sig_src_1 = analog.sig_source_c(samp_rate, analog.GR_SIN_WAVE, 0, 1, 0)
         self._sig_src_2 = analog.sig_source_c(samp_rate, analog.GR_CONST_WAVE, 0, 1, 0)
+        self._sig_src_3 = analog.sig_source_c(samp_rate, analog.GR_CONST_WAVE, 0, 1, 0)
+        self._sig_src_4 = analog.sig_source_c(samp_rate, analog.GR_CONST_WAVE, 0, 1, 0)
         self._c2r = blocks.complex_to_real()
+        self._c2r2 = blocks.complex_to_real()
         self._f2c = blocks.float_to_complex()
         self._pm = analog.phase_modulator_fc(0)
         self._mult = blocks.multiply_cc()
-        self._mod_selector = gmrr_rn13.stream_sel(gr.sizeof_gr_complex, 3, 0, False)
+        self._mod_selector = gmrr_rn13.stream_sel(gr.sizeof_gr_complex, 3, 0, True)
 
         self.connect(self._sig_src_1, (self._mult,0))
         self.connect(self._sig_src_2, (self._mod_selector,0))
-        self.connect(self._sig_src_2, self._c2r)
+        self.connect(self._sig_src_3, self._c2r)
+        self.connect(self._sig_src_4, self._c2r2)
         self.connect(self._c2r, self._pm, (self._mod_selector,1))
-        self.connect(self._c2r, self._f2c, (self._mod_selector,2))
+        self.connect(self._c2r2, self._f2c, (self._mod_selector,2))
         self.connect(self._mod_selector, (self._mult,1))
 
         self.connect(self._mult, self)
@@ -68,8 +72,8 @@ class gmrr_test_src(gr.hier_block2):
             self._sig_src_1.set_frequency(self._freq)
             self._sig_src_1.set_amplitude(self._carrier_ampl)
             self._sig_src_1.set_offset(0)#self._carrier_ampl)
-            self._sig_src_2.set_waveform(self._mod_type)
-            self._sig_src_2.set_frequency(self._mod_freq)
+            self._sig_src_3.set_waveform(self._mod_type)
+            self._sig_src_3.set_frequency(self._mod_freq)
 #            if self._mod_type in [analog.GR_TRI_WAVE, analog.GR_SQR_WAVE]:
 #                self._sig_src_2.set_amplitude(self._mod_ampl*2)
 #                self._sig_src_2.set_offset(-self._mod_ampl+self._carrier_ampl)
@@ -84,14 +88,14 @@ class gmrr_test_src(gr.hier_block2):
             self._sig_src_1.set_frequency(self._freq)
             self._sig_src_1.set_amplitude(1)
             self._sig_src_1.set_offset(0)
-            self._sig_src_2.set_waveform(self._mod_type)
-            self._sig_src_2.set_frequency(self._mod_freq)
+            self._sig_src_4.set_waveform(self._mod_type)
+            self._sig_src_4.set_frequency(self._mod_freq)
             if self._mod_type in [analog.GR_TRI_WAVE, analog.GR_SQR_WAVE]:
-                self._sig_src_2.set_amplitude(self._mod_ampl*2)
-                self._sig_src_2.set_offset(-self._mod_ampl+self._carrier_ampl)
+                self._sig_src_4.set_amplitude(self._mod_ampl*2)
+                self._sig_src_4.set_offset(-self._mod_ampl+self._carrier_ampl)
             else:
-                self._sig_src_2.set_amplitude(self._mod_ampl)
-                self._sig_src_2.set_offset(self._carrier_ampl)
+                self._sig_src_4.set_amplitude(self._mod_ampl)
+                self._sig_src_4.set_offset(self._carrier_ampl)
             self._mod_selector.set_sel(2)
 
         else:
@@ -127,5 +131,7 @@ class gmrr_test_src(gr.hier_block2):
     def set_samp_rate(self, rate):
         self._sig_src_1.set_sampling_freq(rate)
         self._sig_src_2.set_sampling_freq(rate)
+        self._sig_src_3.set_sampling_freq(rate)
+        self._sig_src_4.set_sampling_freq(rate)
         self.update()
 
