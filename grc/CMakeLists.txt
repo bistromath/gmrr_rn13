@@ -20,5 +20,6 @@
 install(FILES
     gmrr_rn13_gmrr_waveform_src.xml
     gmrr_rn13_gmrr_test_src.xml
-    gmrr_rn13_predistorter.xml DESTINATION share/gnuradio/grc/blocks
+    gmrr_rn13_predistorter.xml
+    gmrr_rn13_stream_sel.xml DESTINATION share/gnuradio/grc/blocks
 )

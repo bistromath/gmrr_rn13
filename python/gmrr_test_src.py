@@ -26,17 +26,13 @@ class gmrr_test_src(gr.hier_block2):
         self._f2c = blocks.float_to_complex()
         self._pm = analog.phase_modulator_fc(0)
         self._mult = blocks.multiply_cc()
-#        self._mod_selector = selector(gr.sizeof_gr_complex, 3, 1, 0, 0)
-        self._mod_selector = blocks.add_cc()
-        self._mult0 = blocks.multiply_const_cc(1)
-        self._mult1 = blocks.multiply_const_cc(0)
-        self._mult2 = blocks.multiply_const_cc(0)
+        self._mod_selector = gmrr_rn13.stream_sel(gr.sizeof_gr_complex, 3, 0, False)
 
         self.connect(self._sig_src_1, (self._mult,0))
-        self.connect(self._sig_src_2, self._mult0, (self._mod_selector,0))
+        self.connect(self._sig_src_2, (self._mod_selector,0))
         self.connect(self._sig_src_2, self._c2r)
-        self.connect(self._c2r, self._pm, self._mult1, (self._mod_selector,1))
-        self.connect(self._c2r, self._f2c, self._mult2, (self._mod_selector,2))
+        self.connect(self._c2r, self._pm, (self._mod_selector,1))
+        self.connect(self._c2r, self._f2c, (self._mod_selector,2))
         self.connect(self._mod_selector, (self._mult,1))
 
         self.connect(self._mult, self)
@@ -65,10 +61,7 @@ class gmrr_test_src(gr.hier_block2):
             self._sig_src_2.set_waveform(analog.GR_COS_WAVE)
             self._sig_src_2.set_amplitude(self._carrier_ampl)
             self._sig_src_2.set_offset(0)
-            #self._mod_selector.set_input_index(0)
-            self._mult0.set_k(1)
-            self._mult1.set_k(0)
-            self._mult2.set_k(0)
+            self._mod_selector.set_sel(0)
 
         elif self._mode == 'PM':
             self._sig_src_1.set_waveform(analog.GR_COS_WAVE)
@@ -83,11 +76,8 @@ class gmrr_test_src(gr.hier_block2):
 #            else:
 #                self._sig_src_2.set_amplitude(self._mod_ampl)
             self._sig_src_1.set_offset(0)
-            #self._mod_selector.set_input_index(1)
-            self._mult0.set_k(0)
-            self._mult1.set_k(1)
-            self._mult2.set_k(0)
             self._pm.set_sensitivity(self._mod_ampl)
+            self._mod_selector.set_sel(1)
 
         elif self._mode == 'AM':
             self._sig_src_1.set_waveform(analog.GR_COS_WAVE)
@@ -102,10 +92,7 @@ class gmrr_test_src(gr.hier_block2):
             else:
                 self._sig_src_2.set_amplitude(self._mod_ampl)
                 self._sig_src_2.set_offset(self._carrier_ampl)
-            #self._mod_selector.set_input_index(2)
-            self._mult0.set_k(0)
-            self._mult1.set_k(0)
-            self._mult2.set_k(1)
+            self._mod_selector.set_sel(2)
 
         else:
             print "Invalid mode %s" % self._mode
@@ -141,7 +128,4 @@ class gmrr_test_src(gr.hier_block2):
         self._sig_src_1.set_sampling_freq(rate)
         self._sig_src_2.set_sampling_freq(rate)
         self.update()
-
-
-
 

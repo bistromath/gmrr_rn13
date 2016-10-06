@@ -28,6 +28,7 @@ link_directories(${Boost_LIBRARY_DIRS})
 list(APPEND gmrr_rn13_sources
     gmrr_waveform_src_impl.cc
     predistorter_impl.cc
+    stream_sel_impl.cc
 )
 
 add_library(gnuradio-gmrr_rn13 SHARED ${gmrr_rn13_sources})

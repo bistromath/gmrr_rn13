@@ -23,5 +23,6 @@
 install(FILES
     api.h
     gmrr_waveform_src.h
-    predistorter.h DESTINATION include/gmrr_rn13
+    predistorter.h
+    stream_sel.h DESTINATION include/gmrr_rn13
 )

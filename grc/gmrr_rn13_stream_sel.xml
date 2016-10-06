@@ -1,0 +1,92 @@
+<?xml version="1.0"?>
+<block>
+  <name>stream_sel</name>
+  <key>gmrr_rn13_stream_sel</key>
+  <category>gmrr_rn13</category>
+  <import>import gmrr_rn13</import>
+  <make>gmrr_rn13.stream_sel($type.size, $ninputs, $sel, $block)</make>
+  <callback>set_sel($sel)</callback>
+  <!-- Make one 'param' node for every Parameter you want settable from the GUI.
+       Sub-nodes:
+       * name
+       * key (makes the value accessible as $keyname, e.g. in the make node)
+       * type -->
+  <param>
+    <name>IO Type</name>
+    <key>type</key>
+    <type>enum</type>
+    <option>
+	<name>Complex</name>
+	<key>complex</key>
+	<opt>size:gr.sizeof_gr_complex</opt>
+    </option>
+    <option>
+	<name>Float</name>
+	<key>float</key>
+	<opt>size:gr.sizeof_float</opt>
+    </option>
+    <option>
+	<name>Int</name>
+	<key>int</key>
+	<opt>size:gr.sizeof_int</opt>
+    </option>
+    <option>
+	<name>Short</name>
+	<key>short</key>
+	<opt>size:gr.sizeof_short</opt>
+    </option>
+    <option>
+	<name>Byte</name>
+	<key>byte</key>
+	<opt>size:gr.sizeof_char</opt>
+    </option>
+  </param>
+  <param>
+	<name>Number of inputs</name>
+	<key>ninputs</key>
+	<value>2</value>
+	<type>int</type>
+  </param>
+  <param>
+	<name>Selector</name>
+	<key>sel</key>
+	<value>0</value>
+	<type>int</type>
+  </param>
+  <param>
+	<name>Block</name>
+	<key>block</key>
+	<value>True</value>
+	<type>bool</type>
+	<option>
+		<name>True</name>
+		<key>True</key>
+	</option>
+	<option>
+		<name>False</name>
+		<key>False</key>
+	</option>
+  </param>
+  <check>$sel &lt; $ninputs</check>
+
+  <!-- Make one 'sink' node per input. Sub-nodes:
+       * name (an identifier for the GUI)
+       * type
+       * vlen
+       * optional (set to 1 for optional inputs) -->
+  <sink>
+    <name>in</name>
+    <type>$type</type>
+    <nports>$ninputs</nports>
+  </sink>
+
+  <!-- Make one 'source' node per output. Sub-nodes:
+       * name (an identifier for the GUI)
+       * type
+       * vlen
+       * optional (set to 1 for optional inputs) -->
+  <source>
+    <name>out</name>
+    <type>$type</type>
+  </source>
+</block>
