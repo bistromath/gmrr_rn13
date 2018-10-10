@@ -49,7 +49,7 @@ namespace gr {
        */
       static sptr make(std::string filename);
 
-      void set_filename(std::string filename);
+      virtual void set_filename(std::string filename) = 0;
     };
 
   } // namespace gmrr_rn13
