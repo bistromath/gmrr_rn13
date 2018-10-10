@@ -5,6 +5,7 @@
   <category>gmrr_rn13</category>
   <import>import gmrr_rn13</import>
   <make>gmrr_rn13.gmrr_waveform_src($filename)</make>
+  <callback>set_filename($filename)</callback>
   <!-- Make one 'param' node for every Parameter you want settable from the GUI.
        Sub-nodes:
        * name

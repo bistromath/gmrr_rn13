@@ -24,6 +24,7 @@
 
 #include <gmrr_rn13/api.h>
 #include <gnuradio/sync_block.h>
+#include <string>
 
 namespace gr {
   namespace gmrr_rn13 {
@@ -47,6 +48,8 @@ namespace gr {
        * creating new instances.
        */
       static sptr make(std::string filename);
+
+      void set_filename(std::string filename);
     };
 
   } // namespace gmrr_rn13

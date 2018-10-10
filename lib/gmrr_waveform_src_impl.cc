@@ -39,18 +39,13 @@ namespace gr {
         (new gmrr_waveform_src_impl(filename));
     }
 
-    /*
-     * The private constructor
-     */
-    gmrr_waveform_src_impl::gmrr_waveform_src_impl(std::string filename)
-      : gr::sync_block("gmrr_waveform_src",
-              gr::io_signature::make(0, 0, 0),
-              gr::io_signature::make(1, 1, sizeof(gr_complex))),
-      d_offset(0)
-    {
+    void 
+    gmrr_waveform_src_impl::read_file(std::string filename) {
         //open file
         std::ifstream file(filename.c_str());
         assert(file.is_open());
+	std::lock_guard<std::mutex> lock(d_lock);
+	d_vec.clear();
 
         //read file, parse to d_vec
         std::string line;
@@ -70,10 +65,28 @@ namespace gr {
     }
 
     /*
+     * The private constructor
+     */
+    gmrr_waveform_src_impl::gmrr_waveform_src_impl(std::string filename)
+      : gr::sync_block("gmrr_waveform_src",
+              gr::io_signature::make(0, 0, 0),
+              gr::io_signature::make(1, 1, sizeof(gr_complex))),
+      d_offset(0)
+    {
+        read_file(filename);
+    }
+
+    /*
      * Our virtual destructor.
      */
     gmrr_waveform_src_impl::~gmrr_waveform_src_impl()
     {
+    }
+
+    void
+    gmrr_waveform_src_impl::set_filename(std::string filename)
+    {
+	read_file(filename);
     }
 
     int
@@ -84,6 +97,7 @@ namespace gr {
         gr_complex *out = (gr_complex *) output_items[0];
 
         size_t oidx = 0;
+	std::lock_guard<std::mutex> lock(d_lock);
         while(oidx < noutput_items) {
             out[oidx] = d_vec[d_offset];
             d_offset = (d_offset+1)%d_vec.size();
